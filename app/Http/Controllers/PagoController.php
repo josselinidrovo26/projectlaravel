@@ -138,10 +138,6 @@ class PagoController extends Controller
         // Actualiza el campo eventoPago en el registro de pago
         $pago->eventoPago = $request->input('titulo');
         $pago->save();
-
-        return redirect()->action([PaymentController::class, 'payWithPayPal'], ['amount' => $pago->abono]);
-
-
         return redirect()->route('pagos.index');
     }
 

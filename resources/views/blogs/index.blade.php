@@ -181,11 +181,12 @@
                                                     </script>
 
 
+                                                    @if ($user->persona->estudiante && $user->persona->estudiante->curso)
 
                                                        <!-- Botón de pagar -->
                                                         <a class="btn btn-warning btn-sm" href="{{ route('pasarelas.show', $blog->id) }}" title="pagar"><i class="fas fa-money-bill"></i></a>
-
-
+                                                    @endif      
+                                                    
                                                     </td>
                                                 </tr>
                                             @endforeach

@@ -63,16 +63,16 @@ Route::group(['middleware' => ['auth']], function(){
     Route::resource('calendary', CalendaryController::class);
     Route::resource('auditoria', AuditoriaController::class);
     Route::resource('persona', PersonaController::class);
-     Route::resource('detalles', DetallesController::class);
+    Route::resource('detalles', DetallesController::class);
     Route::resource('periodos', PeriodoController::class);
     Route::resource('estudiante', EstudianteController::class);
-     Route::resource('pagos', PagoController::class);
-     Route::resource('pasarelas', PasarelaController::class);
+    Route::resource('pagos', PagoController::class);
+    Route::resource('pasarelas', PasarelaController::class);
+    Route::get('/payment', [PaymentController::class, 'showPaymentPage']);
 
-     Route::get('/payment', [PaymentController::class, 'showPaymentPage']);
+    Route::post('/pasarelas/getDataStudent', [PasarelaController::class, 'getDataStudent'])->name('pasarelas.getDataStudent');
 
-     Route::get('/payment/pay-with-paypal', [PaymentController::class, 'payWithPayPal'])->name('payment.paypal');
-     Route::get('/payment/status', [PaymentController::class, 'payPalStatus'])->name('payment.status');
+
      
 });
 

@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 use App\Models\Blog;
+use App\Models\Pago;
 use App\Models\Pasarela;
 use Illuminate\Support\Facades\Redirect;
 
@@ -9,6 +10,7 @@ use Illuminate\Http\Request;
 
 class PasarelaController extends Controller
 {
+    private $blog; 
     /**
      * Display a listing of the resource.
      *
@@ -23,7 +25,6 @@ class PasarelaController extends Controller
         if (!$blog) {
             abort(404); // Puedes personalizar la respuesta en caso de que el blog no exista
         }
-
         // Pasa los datos del blog a la vista "pasarelas.index"
         return view('pasarelas.index', ['blog' => $blog]);
     }
@@ -63,8 +64,11 @@ class PasarelaController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function show(Blog $blog)
+    public function show($blog_id)
     {
+        // Obtén los datos del blog utilizando el modelo Blog
+        $blog = Blog::find($blog_id);
+        $this->blog = $blog;
         return view('pasarela.index', compact('blog'));
     }
 
@@ -79,6 +83,39 @@ class PasarelaController extends Controller
         //
     }
 
+    public function getDataStudent(Request $request)
+    {
+        $user = auth()->user();
+        // Obtén los datos del estudiante y los datos de pago guardados en el blog
+        $studentData = $user->persona;
+        $paymentData = Blog::find($request->blog_id);;
+        $status = 'Pagado';
+        $cuotaPaymentData = (float) $paymentData->cuota;
+        $cuotaRequest = (float) $request->monto;
+        $diferencia = $cuotaPaymentData - $cuotaRequest;
+        if ($cuotaPaymentData != $cuotaRequest) {
+            $status = 'Abonado';
+        }
+        $pago = new Pago();
+        $pago->abono = $cuotaRequest;
+        $pago->diferencia = $diferencia;
+        $pago->estado = $status;
+        $pago->estudiante_id = $studentData->estudiante->id;
+        $pago->eventoPago = $request->blog_id; // Asigna el valor al campo eventoPago
+        $pago->usuarioid = auth()->user()->id;
+        $pago->save();
+
+       
+        // Combina los datos del estudiante y los datos de pago en un solo array
+        $data = [
+            'student' => $studentData,
+            'payment' => $paymentData,
+            'status' => $status
+        ];
+
+        // Devuelve los datos como respuesta JSON
+        return response()->json($data);
+    }
     /**
      * Update the specified resource in storage.
      *

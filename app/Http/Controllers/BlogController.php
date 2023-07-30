@@ -41,7 +41,7 @@ class BlogController extends Controller
         }
 
 
-        return view('blogs.index', compact('blogs'));
+        return view('blogs.index', compact('blogs', 'user'));
     }
 
     /**

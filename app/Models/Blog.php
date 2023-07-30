@@ -12,7 +12,7 @@ class Blog extends Model
 {
     use HasFactory;
 
-    protected $fillable = ['titulo', 'contenido', 'cuota', 'pago', 'cursoblog', 'periodoblog'];
+    protected $fillable = ['id','titulo', 'contenido', 'cuota', 'pago', 'cursoblog', 'periodoblog'];
 
 
     public function detalles()

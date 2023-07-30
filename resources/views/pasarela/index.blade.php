@@ -10,7 +10,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
     <title>Document</title>
-
+    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
     <script src="https://www.paypal.com/sdk/js?client-id=AZ0IlC3Wm2UwLxYMrzxlCs2pWEjtLJSeN7z655zcI_acEeX1stSvNLIhytSzM8XdpnxyDiSuU1Rz1dzd&currency=USD"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
     <script src="/docs/5.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-geWF76RCwLtnZ8qwWowPQNguL3RmwHVBC9FhGdlKrxdiJJigb/j/68SIy3Te4Bkz" crossorigin="anonymous"></script>
@@ -44,7 +44,7 @@
 
 <!-- Contenido de cada paso -->
     <!-- Paso 1: Seleccionar método de pago -->
-    <div class="row step-content" data-step="1">
+    <div class="row step-content" data-step="1" id="paso1">
         <div class="col-lg-12">
              <!-- Primera columna con el primer card -->
              <h5>Paso 1: Seleccionar método de pago</h5>
@@ -54,9 +54,11 @@
                 <div class="card-body">
 
                                 <div class="section-header custom-header">
-
-                                    <h3 class="page__heading"><strong>Importe:</strong>{{ $blog->cuota }}</h3>
-                                </div>
+                                    <h3 class="page__heading">
+                                        <strong>Importe:</strong>
+                                        <input type="text" name="" id="cuotaInput" max="{{ $blog->cuota }}" value="{{ $blog->cuota }}" style="background-color: transparent; color: white; border: none;"
+                                        pattern="[0-9]+(\.[0-9]+)?" oninput="validateCuota(this)">
+                                    </h3> </div>
 
                                 <p><b>Título del blog: </b>{{ $blog->titulo }}</p>
                                 <p><b>Fecha: </b><?php echo date('Y-m-d'); ?></p> <!-- Imprime la fecha actual -->
@@ -73,7 +75,12 @@
                     <body>
                         {{--  BOTON PAGOS --}}
                         <div id="paypal-button-container"></div>
-                        <script>
+                      <script>
+                          
+                             var cuotaInput = document.getElementById('cuotaInput');
+                            // Convertir el valor del input a un número flotante (si es necesario)
+                            var cuota = parseFloat(cuotaInput.value);
+                            console.log(cuota);
                             paypal.Buttons({
                                 style: {
                                     color: 'blue',
@@ -84,16 +91,49 @@
                                     return actions.order.create({
                                         purchase_units: [{
                                             amount: {
-                                                value: 10
+                                                value: cuota
                                             }
                                         }]
                                     });
                                 },
-
+                                
                                 onApprove: function(data, actions) {
                                     actions.order.capture().then(function(detalles) {
-                                        console.log(detalles);
-                                        window.location.href = "completado.php"
+
+                                        document.getElementById('paso1').style.display = 'none';
+                                        // Mostrar el div del paso 2
+                                        document.getElementById('paso2').style.display = 'block';
+                                        //window.location.href = "completado.php"
+                                        
+                                        axios.post('/pasarelas/getDataStudent', {
+                                            status: 'Pagado',
+                                            monto: cuota,
+                                            blog_id: {{ $blog->id }}
+                                        })
+                                        .then(function (response) {
+                                            console.log(response);
+                                            var fechaActual = new Date();
+
+                                            // 2. Formatear la fecha según el formato deseado (por ejemplo, "dd/mm/yyyy")
+                                            var dia = fechaActual.getDate().toString().padStart(2, '0');
+                                            var mes = (fechaActual.getMonth() + 1).toString().padStart(2, '0');
+                                            var anio = fechaActual.getFullYear();
+                                            var fechaFormateada = dia + '/' + mes + '/' + anio;
+                                            
+                                            // 3. Asignar la fecha formateada al elemento "fecha"
+                                            document.getElementById('fechaPago').innerText = fechaFormateada;
+                                            document.getElementById('nombreEstudiante').innerText = response.data.student.nombre;
+                                            document.getElementById('cuota').innerText =  cuota;
+                                            document.getElementById('diferencia').innerText =  response.data.payment.cuota - cuota;
+                                            if( response.data.payment.cuota - cuota ==0 ){
+                                                document.getElementById('status').innerText =  "Pagado";
+                                            }else {
+                                                document.getElementById('status').innerText =  "Abonado";
+                                            }
+                                        })
+                                        .catch(function (error) {
+                                            console.log(error);
+                                        });
                                     });
                                 },
 
@@ -114,10 +154,23 @@
     </div>
 
     <!-- Paso 2: Resumen de pago -->
-    <div class="row mt-4 step-content" data-step="2" style="display: none;">
+    <div class="row mt-4 step-content" data-step="2" style="display: none;"  id="paso2">
         <div class="col-lg-12">
             <h5>Paso 2: Resumen de pago</h5>
-            <!-- Contenido del paso 2 aquí (puedes agregar un card si es necesario) -->
+            
+            
+            <div class="card" style="background-color: #cce5ff;">
+                <div class="card-body">
+                    <h5 class="card-title">Detalles del Pago</h5>
+                    <p class="card-text"><strong>Nombre del Estudiante:</strong> <span id="nombreEstudiante"></span></p>
+                    <p class="card-text"><strong>Fecha del Pago:</strong> <span id="fechaPago"></span></p>
+                    <p class="card-text"><strong>Estado:</strong> <span id="status"></span></p>
+                    <p class="card-text"><strong>Cuota:</strong> <span id="cuota"></span></p>
+                    <p class="card-text"><strong>Diferencia:</strong> <span id="diferencia"></span></p>
+                </div>
+            </div>
+
+
         </div>
     </div>
 
@@ -235,3 +288,18 @@
             }
 </style>
 
+<script>
+    function validateCuota(input) {
+        // Obtener el valor ingresado por el usuario
+        var cuota = parseFloat(input.value);
+    
+        // Obtener el valor máximo permitido (valor de cuota)
+        var maxCuota = parseFloat(input.getAttribute('max'));
+    
+        // Verificar si el valor ingresado es numérico y no es mayor que el valor de cuota
+        if (isNaN(cuota) || cuota > maxCuota) {
+            // Si el valor no es válido, establecer el valor del input en el valor de cuota
+            input.value = '';
+        }
+    }
+</script>
