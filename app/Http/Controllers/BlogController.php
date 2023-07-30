@@ -30,7 +30,7 @@ class BlogController extends Controller
      */
     public function index()
     {
-
+        
         $user = auth()->user();
 
         if ($user->persona->estudiante && $user->persona->estudiante->curso) {
@@ -39,9 +39,9 @@ class BlogController extends Controller
         } else {
             $blogs = Blog::paginate(10);
         }
+        
 
-
-        return view('blogs.index', compact('blogs', 'user'));
+        return view('blogs.index', compact('blogs', 'user','canPay'));
     }
 
     /**

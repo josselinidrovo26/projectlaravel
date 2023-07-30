@@ -56,8 +56,9 @@
                                 <div class="section-header custom-header">
                                     <h3 class="page__heading">
                                         <strong>Importe:</strong>
-                                        <input type="text" name="" id="cuotaInput" max="{{ $blog->cuota }}" value="{{ $blog->cuota }}" style="background-color: transparent; color: white; border: none;"
+                                        <input type="text" name="" id="cuotaInput" max="{{ $blog->cuota }}" value="{{$blog->cuota}}" style="background-color: transparent; color: white; border: none;"
                                         pattern="[0-9]+(\.[0-9]+)?" oninput="validateCuota(this)">
+                                       
                                     </h3> </div>
 
                                 <p><b>Título del blog: </b>{{ $blog->titulo }}</p>
@@ -67,9 +68,10 @@
                 </div>
             </div>
         </div>
-
+        
+        @if ($canpay)
         <!-- Segunda columna con el segundo card -->
-        <div class="col-lg-6">
+        <div class="col-lg-6" >
             <div class="card">
                 <div class="card-body">
                     <body>
@@ -91,7 +93,7 @@
                                     return actions.order.create({
                                         purchase_units: [{
                                             amount: {
-                                                value: cuota
+                                                value: document.getElementById('cuotaInput').value
                                             }
                                         }]
                                     });
@@ -113,14 +115,10 @@
                                         .then(function (response) {
                                             console.log(response);
                                             var fechaActual = new Date();
-
-                                            // 2. Formatear la fecha según el formato deseado (por ejemplo, "dd/mm/yyyy")
                                             var dia = fechaActual.getDate().toString().padStart(2, '0');
                                             var mes = (fechaActual.getMonth() + 1).toString().padStart(2, '0');
                                             var anio = fechaActual.getFullYear();
                                             var fechaFormateada = dia + '/' + mes + '/' + anio;
-                                            
-                                            // 3. Asignar la fecha formateada al elemento "fecha"
                                             document.getElementById('fechaPago').innerText = fechaFormateada;
                                             document.getElementById('nombreEstudiante').innerText = response.data.student.nombre;
                                             document.getElementById('cuota').innerText =  cuota;
@@ -149,6 +147,17 @@
                 </div>
             </div>
         </div>
+        @else
+        <div class="col-lg-6">
+            <div class="card bg-info text-white">
+                <div class="card-body">
+                    <h5 class="card-title">Pago Completado</h5>
+                    <p class="card-text">El pago del evento ya ha sido completado exitosamente.</p>
+                </div>
+            </div>
+        </div>
+
+        @endif                                             
     </div>
         </div>
     </div>
@@ -170,17 +179,84 @@
                 </div>
             </div>
 
+            <div class="container mt-4">
+                <button type="button" class="btn btn-primary" id="btnSiguiente">Siguiente</button>
+              </div>
+              <script>
+                var btnSiguiente = document.getElementById('btnSiguiente');
+                btnSiguiente.addEventListener('click', function() {
+                  setInvoiceData();
+                });
+              
+                // Definir la función que se ejecutará al hacer clic en el botón "Siguiente"
+                function setInvoiceData() {
+                    axios.post('/pasarelas/getInvoice', {
+                        status: 'Pagado',
+                        monto: cuota,
+                        blog_id: {{ $blog->id }}
+                    })
+                    .then(function (response) {
+                        // 3. Asignar la fecha formateada al elemento "fecha"
+                        console.log(response);
+                        document.getElementById('nombrePersona').innerText =  response.data.student.nombre;
+                        document.getElementById('totalPago').innerText =  document.getElementById('cuotaInput').value;
+                        document.getElementById('tituloEvento').innerText =   response.data.blog.titulo;
+                        document.getElementById('datePago').innerText =  response.data.blog.pago;
+                        document.getElementById('cursoEvento').innerText =  response.data.blog.cursoblog;
+                        var contenidoTabla = '';
+                        response.data.blog.detalles.forEach(function(item) {
+                                contenidoTabla += '<tr>';
+                                contenidoTabla += '<td>' + item.actividad + '</td>';
+                                contenidoTabla += '<td>' + item.precio + '</td>';
+                                contenidoTabla += '</tr>';
+                                });
+                                var tablaDetalle = document.getElementById('tablaDetalle');
+                        // Inserta el contenido generado en el tbody de la tabla
+                        tablaDetalle.innerHTML = contenidoTabla;
+                    })
+                    .catch(function (error) {
+                        console.log(error);
+                    });
 
+                }
+              
+               
+              </script>
+                              
         </div>
     </div>
 
     <!-- Paso 3: Resultado -->
     <div class="row mt-4 step-content" data-step="3" style="display: none;">
         <div class="col-lg-12">
-            <h5>Paso 3: Resultado</h5>
-            <!-- Contenido del paso 3 aquí (puedes agregar un card si es necesario) -->
+          <h5>Paso 3: Resultado</h5>
+      
+          <!-- Cabecera -->
+          <div class="row mb-2">
+            <div class="col-md-2"><strong>Nombre:</strong> <span id="nombrePersona"></span></div>
+            <div class="col-md-2"><strong>Total:</strong> <span id="totalPago"></span></div>
+            <div class="col-md-2"><strong>Título:</strong> <span id="tituloEvento"></span></div>
+            <div class="col-md-2"><strong>Fecha:</strong> <span id="datePago"></span></div>
+            <div class="col-md-2"><strong>Curso:</strong> <span id="cursoEvento"></span></div>
+           </div>
+      
+          <!-- Detalle -->
+          <table class="table table-bordered">
+            <thead>
+              <tr>
+                <th>Actividad</th>
+                <th>Precio</th>
+              </tr>
+            </thead>
+            <tbody id="tablaDetalle">
+             
+              <!-- Puedes agregar más filas según sea necesario -->
+            </tbody>
+          </table>
+      
         </div>
-    </div>
+      </div>
+      
 
 
 </div>

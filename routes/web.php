@@ -71,7 +71,7 @@ Route::group(['middleware' => ['auth']], function(){
     Route::get('/payment', [PaymentController::class, 'showPaymentPage']);
 
     Route::post('/pasarelas/getDataStudent', [PasarelaController::class, 'getDataStudent'])->name('pasarelas.getDataStudent');
-
+    Route::post('/pasarelas/getInvoice', [PasarelaController::class, 'getInvoice'])->name('pasarelas.getInvoice');
 
      
 });

@@ -3,7 +3,7 @@
 namespace App\Http\Controllers;
 use App\Models\Blog;
 use App\Models\Pago;
-use App\Models\Pasarela;
+use App\Models\Detalles;
 use Illuminate\Support\Facades\Redirect;
 
 use Illuminate\Http\Request;
@@ -66,10 +66,20 @@ class PasarelaController extends Controller
      */
     public function show($blog_id)
     {
+        $user = auth()->user();
+        $studentData = $user->persona;
         // Obtén los datos del blog utilizando el modelo Blog
         $blog = Blog::find($blog_id);
+        $pagos = Pago::where('eventoPago', $blog_id)->where('estudiante_id',  $studentData->estudiante->id)->latest()
+        ->first();
+        $canpay = true;
+        if($pagos){
+            $canpay =  $pagos->diferencia !== 0;
+        }
+       
+
         $this->blog = $blog;
-        return view('pasarela.index', compact('blog'));
+        return view('pasarela.index', compact('blog','canpay','pagos'));
     }
 
     /**
@@ -88,7 +98,7 @@ class PasarelaController extends Controller
         $user = auth()->user();
         // Obtén los datos del estudiante y los datos de pago guardados en el blog
         $studentData = $user->persona;
-        $paymentData = Blog::find($request->blog_id);;
+        $paymentData = Blog::find($request->blog_id);
         $status = 'Pagado';
         $cuotaPaymentData = (float) $paymentData->cuota;
         $cuotaRequest = (float) $request->monto;
@@ -116,6 +126,36 @@ class PasarelaController extends Controller
         // Devuelve los datos como respuesta JSON
         return response()->json($data);
     }
+
+
+
+    public function getInvoice(Request $request)
+    {
+        $user = auth()->user();
+        // Obtén los datos del estudiante y los datos de pago guardados en el blog
+        $studentData = $user->persona;
+        $blog = Blog::find($request->blog_id);
+        $detalles = $blog->detalles;
+        $status = 'Pagado';
+        $cuotaPaymentData = (float) $blog->cuota;
+        $cuotaRequest = (float) $request->monto;
+        if ($cuotaPaymentData != $cuotaRequest) {
+            $status = 'Abonado';
+        }
+       
+        // Combina los datos del estudiante y los datos de pago en un solo array
+        $data = [
+            'student' => $studentData,
+            'blog' => $blog,
+            'detalles' => $detalles,
+            'status' => $status
+        ];
+
+        // Devuelve los datos como respuesta JSON
+        return response()->json($data);
+    }
+
+
     /**
      * Update the specified resource in storage.
      *
