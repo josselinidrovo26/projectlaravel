@@ -238,6 +238,18 @@
             <div class="col-md-2"><strong>Título:</strong> <span id="tituloEvento"></span></div>
             <div class="col-md-2"><strong>Fecha:</strong> <span id="datePago"></span></div>
             <div class="col-md-2"><strong>Curso:</strong> <span id="cursoEvento"></span></div>
+
+            <div class="btn-container">
+                <button id="descargarPDFButton" style="background-color: #dc3545;padding: 10px 20px;
+                border-radius: 4px;
+                font-size: 16px;
+                font-weight: bold;
+                color: #fff;
+                border: none;
+                cursor: pointer;
+                transition: background-color 0.3s ease;" >Descargar PDF</button>
+            </div>
+
            </div>
       
           <!-- Detalle -->
@@ -257,6 +269,51 @@
         </div>
       </div>
       
+  {{--  Descargar reportes --}}
+  <script>
+        document.getElementById('descargarPDFButton').addEventListener('click', function() {
+        imprimirTablas();
+    });
+
+    function imprimirTablas() {
+        var tablaContenido = document.getElementById('contenidotabla');
+        var win = window.open('', '', 'width=800, height=600');
+        filename: 'reporte_Factura.pdf',
+        win.document.write('<html><head><title>Factura</title></head><body>');
+        win.document.write('<div style="max-width: 800px; margin: 0 auto; padding: 20px; border: 1px solid #ccc; box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);"><div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 20px;"><div style="max-width: 150px;"><img src="ruta_a_tu_logo.png" alt="Logo de la empresa" style="max-width: 100%; height: auto;"></div><div style="text-align: right;">');
+        win.document.write(' <h2 style="margin: 0; font-size: 24px; color: #333;">Factura N° 12345</h2>');
+        win.document.write(' <p style="margin: 5px 0; color: #555;">Fecha: ' + document.getElementById('datePago').innerText + '</p>');
+        win.document.write(' <p style="margin: 5px 0; color: #555;">Cliente: ' + document.getElementById('nombrePersona').innerText + '</p>');
+        win.document.write(' <p style="margin: 5px 0; color: #555;">Actividad a pagar: ' + document.getElementById('tituloEvento').innerText + '</p>');
+        win.document.write(' <p style="margin: 5px 0; color: #555;">Total a pagar: ' + document.getElementById('totalPago').innerText + '</p>');
+        win.document.write(' </div> </div>');
+        win.document.write(' <div style="width: 100%; overflow-x: auto;"> ');
+        win.document.write('<table style="width: 100%; border-collapse: collapse;">  <thead><tr> <th style="padding: 8px; border: 1px solid #ccc; background-color: #f2f2f2;" >Actividad</th><th style="padding: 8px; border: 1px solid #ccc; background-color: #f2f2f2;">Precio</th></tr></thead> <tbody id="tablaDetalle">');
+
+        var detallesTabla = document.getElementById('tablaDetalle');
+        var filas = detallesTabla.getElementsByTagName('tr');
+        for (var i = 0; i < filas.length; i++) {
+            var fila = filas[i];
+            var celdas = fila.getElementsByTagName('td');
+            var col1 = celdas[0].innerText;
+            var col2 = celdas[1].innerText;
+
+            win.document.write('<tr>');
+            win.document.write('<td style="padding: 8px; border: 1px solid #ccc;">' + col1 + '</td>');
+            win.document.write('<td style="padding: 8px; border: 1px solid #ccc;">' + col2 + '</td>');
+            win.document.write('</tr>');
+        }
+        win.document.write('</tbody></table>');
+        win.document.write(' </div> ');
+        win.document.write('</body></html>');
+        win.document.close();
+        win.print();
+        win.close();
+        
+        // Crea el PDF con el contenido de la tabla
+        html2pdf().from(tablaContenido).set(options).save();
+    }
+    </script>
 
 
 </div>
