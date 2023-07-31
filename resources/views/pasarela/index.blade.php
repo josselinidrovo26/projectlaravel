@@ -280,7 +280,7 @@
         var win = window.open('', '', 'width=800, height=600');
         filename: 'reporte_Factura.pdf',
         win.document.write('<html><head><title>Factura</title></head><body>');
-        win.document.write('<div style="max-width: 800px; margin: 0 auto; padding: 20px; border: 1px solid #ccc; box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);"><div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 20px;"><div style="max-width: 150px;"><img src="ruta_a_tu_logo.png" alt="Logo de la empresa" style="max-width: 100%; height: auto;"></div><div style="text-align: right;">');
+        win.document.write('<div style="max-width: 800px; margin: 0 auto; padding: 20px; border: 1px solid #ccc; box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);"><div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 20px;"><div style="max-width: 150px;"><img src="{{ asset('img/logo.png') }}" alt="Logo de la empresa" style="max-width: 100%; height: auto;"></div><div style="text-align: right;">');
         win.document.write(' <h2 style="margin: 0; font-size: 24px; color: #333;">Factura N° 12345</h2>');
         win.document.write(' <p style="margin: 5px 0; color: #555;">Fecha: ' + document.getElementById('datePago').innerText + '</p>');
         win.document.write(' <p style="margin: 5px 0; color: #555;">Cliente: ' + document.getElementById('nombrePersona').innerText + '</p>');
@@ -288,7 +288,13 @@
         win.document.write(' <p style="margin: 5px 0; color: #555;">Total a pagar: ' + document.getElementById('totalPago').innerText + '</p>');
         win.document.write(' </div> </div>');
         win.document.write(' <div style="width: 100%; overflow-x: auto;"> ');
-        win.document.write('<table style="width: 100%; border-collapse: collapse;">  <thead><tr> <th style="padding: 8px; border: 1px solid #ccc; background-color: #f2f2f2;" >Actividad</th><th style="padding: 8px; border: 1px solid #ccc; background-color: #f2f2f2;">Precio</th></tr></thead> <tbody id="tablaDetalle">');
+        win.document.write('<table style="width: 100%; border-collapse: collapse;">  <thead><tr>'
+            +'<th style="padding: 8px; border: 1px solid #ccc; background-color: #f2f2f2;">#</th>'
+            +'<th style="padding: 8px; border: 1px solid #ccc; background-color: #f2f2f2;">Descripcion</th>'
+            +'<th style="padding: 8px; border: 1px solid #ccc; background-color: #f2f2f2;">Actividad</th>'
+            +'<th style="padding: 8px; border: 1px solid #ccc; background-color: #f2f2f2;">Cantidad</th>'
+            +'<th style="padding: 8px; border: 1px solid #ccc; background-color: #f2f2f2;">Precio</th>'
+            +'</tr></thead> <tbody id="tablaDetalle">');
 
         var detallesTabla = document.getElementById('tablaDetalle');
         var filas = detallesTabla.getElementsByTagName('tr');
@@ -299,10 +305,34 @@
             var col2 = celdas[1].innerText;
 
             win.document.write('<tr>');
+            win.document.write('<td style="padding: 8px; border: 1px solid #ccc;">' + (i + 1) + '</td>');
+            win.document.write('<td style="padding: 8px; border: 1px solid #ccc;">' + document.getElementById('tituloEvento').innerText  + '</td>');
             win.document.write('<td style="padding: 8px; border: 1px solid #ccc;">' + col1 + '</td>');
+            win.document.write('<td style="padding: 8px; border: 1px solid #ccc;"> 1 </td>');
             win.document.write('<td style="padding: 8px; border: 1px solid #ccc;">' + col2 + '</td>');
             win.document.write('</tr>');
         }
+        win.document.write('<tr>');
+            win.document.write('<td style="padding: 8px; border: 1px solid #ccc;"></td>');
+            win.document.write('<td style="padding: 8px; border: 1px solid #ccc;"></td>');
+            win.document.write('<td style="padding: 8px; border: 1px solid #ccc;"></td>');
+            win.document.write('<td style="padding: 8px; border: 1px solid #ccc; text-align: right ;background-color: #f2f2f2;">Subtotal</td>');
+            win.document.write('<td style="padding: 8px; border: 1px solid #ccc;">' +document.getElementById('totalPago').innerText + '</td>');
+        win.document.write('</tr>');
+        win.document.write('<tr>');
+            win.document.write('<td style="padding: 8px; border: 1px solid #ccc;"></td>');
+            win.document.write('<td style="padding: 8px; border: 1px solid #ccc;"></td>');
+            win.document.write('<td style="padding: 8px; border: 1px solid #ccc;"></td>');
+            win.document.write('<td style="padding: 8px; border: 1px solid #ccc; text-align: right ;background-color: #f2f2f2;">Iva</td>');
+            win.document.write('<td style="padding: 8px; border: 1px solid #ccc;"> 0.00 </td>');
+        win.document.write('</tr>');
+        win.document.write('<tr>');
+            win.document.write('<td style="padding: 8px; border: 1px solid #ccc;"></td>');
+            win.document.write('<td style="padding: 8px; border: 1px solid #ccc;"></td>');
+            win.document.write('<td style="padding: 8px; border: 1px solid #ccc;"></td>');
+            win.document.write('<td style="padding: 8px; border: 1px solid #ccc; text-align: right ;background-color: #f2f2f2;">Total</td>');
+            win.document.write('<td style="padding: 8px; border: 1px solid #ccc;">' +document.getElementById('totalPago').innerText + '</td>');
+        win.document.write('</tr>');
         win.document.write('</tbody></table>');
         win.document.write(' </div> ');
         win.document.write('</body></html>');
