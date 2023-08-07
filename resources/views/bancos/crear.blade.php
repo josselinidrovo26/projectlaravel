@@ -34,13 +34,17 @@
                                     </div>
                                 </div>
 
-
                                 <div class="col-xs-12 col-sm-12 col-md-12">
                                     <div class="form-group">
                                         <label for="Tipocuenta">Tipo de cuenta</label>
-                                    <input class="form-control" type="text" name="Tipocuenta">
-                                    </div><br>
+                                        <select class="form-control" name="Tipocuenta">
+                                            <option value="Ahorros">Ahorros</option>
+                                            <option value="Corriente">Corriente</option>
+                                        </select>
+                                    </div>
+                                    <br>
                                 </div>
+
 
                                 <div class="col-xs-12 col-sm-12 col-md-12">
                                     <div class="form-group">
@@ -57,12 +61,13 @@
                                             </div>
                                         </div>
 
-                                            <div class="col-xs-12 col-sm-12 col-md-12">
-                                                <div class="form-group">
-                                                    <label for="cedula">Cédula del beneficiario</label>
-                                                    <input class="form-control" type="text" name="cedula">
-                                                </div>
+                                        <div class="col-xs-12 col-sm-12 col-md-12">
+                                            <div class="form-group">
+                                                <label for="cedula">Cédula del beneficiario</label>
+                                                <input class="form-control" type="text" name="cedula" maxlength="10">
                                             </div>
+                                        </div>
+
 
 
 

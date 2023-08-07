@@ -52,6 +52,7 @@ class PersonaController extends Controller
             'nombre' => 'required',
             'cedula' => 'required',
             'edad' => '',
+            'fecha' => 'date|before:today',
             'rol' => 'required',
         ]);
 
@@ -65,6 +66,8 @@ class PersonaController extends Controller
         $persona = Persona::create([
             'nombre' => $input['nombre'],
             'cedula' => $input['cedula'],
+            'edad' => $input['edad'],
+            'fecha' => $input['fecha'],
             'rol' => $input['rol'],
             'usuario_id' => $user->id,
         ]);
@@ -123,6 +126,7 @@ class PersonaController extends Controller
             'nombre' => 'required',
             'cedula' => 'required',
             'edad' => '',
+            'fecha' => 'date|before:today',
             'rol' => 'required'
         ]);
 
@@ -131,6 +135,8 @@ class PersonaController extends Controller
         $persona = Persona::findOrFail($id);
         $persona->cedula = $request->input('cedula');
         $persona->nombre = $request->input('nombre');
+        $persona->edad = $request->input('edad');
+        $persona->fecha = $request->input('fecha');
         $persona->update($input);
          DB::table('model_has_roles')->where('model_id', $id)->delete();
 
@@ -154,4 +160,32 @@ class PersonaController extends Controller
         Persona::find($id)->delete();
         return redirect()->route('usuarios.index');
     }
+
+
+    public function guardarFecha(Request $request)
+    {
+        $this->validate($request, [
+            'usuario_id' => 'required|integer',
+            'fecha' => 'required|date',
+            'edad' => 'required|integer',
+        ]);
+
+        $usuario_id = $request->input('usuario_id');
+        $fecha = $request->input('fecha');
+        $edad = $request->input('edad');
+
+        // Actualizar el campo de fecha en la tabla "persona"
+        $persona = Persona::where('usuario_id', $usuario_id)->first();
+        $persona->fecha = $fecha;
+        $persona->save();
+
+        // Actualizar el campo de edad en la tabla "persona"
+        $persona->edad = $edad;
+        $persona->save();
+
+        return redirect()->back()->with('success', 'Fecha y edad actualizadas exitosamente.');
+    }
+
+
+
 }

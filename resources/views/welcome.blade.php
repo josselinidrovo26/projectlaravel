@@ -55,11 +55,9 @@
         <ul class="navbar-nav animate side-nav">
           <li class="nav-item">
           </li>
+
           <li class="nav-item">
-            <a class="nav-link" href="#">¿Quiénes somos?</a>
-          </li>
-          <li class="nav-item">
-            <a class="nav-link" href="/contacto">Contáctanos</a>
+            <a href="{{ route('contacto.index') }}">Contáctanos</a>
           </li>
         </ul>
         @if (Route::has('login'))
@@ -78,7 +76,7 @@
           </li>
           @if (Route::has('register'))
           <li class="nav-item">
-            <a href="{{ route('register') }}" class="ml-4 text-sm text-white-700 dark:text-white-500 underline">Regístrate
+           {{--  <a href="{{ route('register') }}" class="ml-4 text-sm text-white-700 dark:text-white-500 underline">Regístrate --}}
               <span class="sr-only">(current)</span>
             </a>
           </li>

@@ -13,9 +13,9 @@
     <div class="container-form">
         <div class="info-form">
             <h2>Contáctanos</h2>
-            <p>Necesitas realizar seguimiento a tus eventos, pagos y reuniones. Puedes contactarte cen nuestros canales oficiales, para un asesoriamiento y capacitación personalizada, según corresponda</p>
-            <a href="#"><i class="fa fa-phone"></i> 098 588 3053</a>
-            <a href="#"><i class="fa fa-envelope"></i> josselin.idrovog@ug.edu.ec</a>
+            <p>Necesitas realizar seguimiento a tus eventos, pagos y reuniones. Puedes contactarte con nuestros canales oficiales, para un asesoriamiento y capacitación personalizada, según corresponda</p>
+            <a href="#"><i class="fa fa-phone"></i> 098 588 3053    /  098 564 4119</a>
+            <a href="#"><i class="fa fa-envelope"></i> josselin.idrovog@ug.edu.ec    /    sergio.alavab@ug.edu.ec</a>
             <a href="#"><i class="fa fa-map-marked"></i> Guayaquil, Ecuador</a>
         </div>
         <form action="#" autocomplete="off">

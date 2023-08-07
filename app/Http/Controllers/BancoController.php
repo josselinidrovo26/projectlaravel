@@ -45,7 +45,7 @@ class BancoController extends Controller
         request()->validate([
             'nombre_banco' => 'required',
             'Tipocuenta'=> 'required',
-            'numcuenta'=> 'required',
+            'numcuenta' => 'required|regex:/^[0-9]+$/',
             'nameUser'=> 'required',
             'cedula'=> 'required'
         ]);
@@ -87,7 +87,7 @@ class BancoController extends Controller
         request()->validate([
             'nombre_banco' => 'required',
             'Tipocuenta'=> 'required',
-            'numcuenta'=> 'required',
+            'numcuenta' => 'required|regex:/^[0-9]+$/',
             'nameUser'=> 'required',
             'cedula'=> 'required'
         ]);

@@ -98,14 +98,11 @@
 
 <script>
     function showNotification() {
-        // Realizar una petición al servidor para obtener los datos del último blog
         fetch('/api/latest-blog')
             .then(response => response.json())
             .then(data => {
-                // Obtener los datos del blog
                 const blog = data;
 
-                // Actualizar los valores en la ventana flotante de notificación
                 document.getElementById("notificationTitle").innerText = blog.titulo;
                 document.getElementById("notificationCuota").innerText = blog.cuota;
                 document.getElementById("notificationPago").innerText = blog.pago;
@@ -120,12 +117,11 @@
                 console.error('Error:', error);
             })
             .finally(() => {
-                // Eliminar la clase CSS para restaurar el color original de la ventana modal
+
                 $('#notificationModal .modal-content').removeClass('modal-color2');
             });
     }
 
-    // Agregar un evento de clic al icono de campana para mostrar el modal de notificación
     document.querySelector('.nav-link-bell').addEventListener('click', showNotification);
 </script>
 

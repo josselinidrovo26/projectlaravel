@@ -7,7 +7,6 @@ use App\Http\Controllers\RolController;
 use App\Http\Controllers\UsuarioController;
 use App\Http\Controllers\BlogController;
 use App\Http\Controllers\BiografiaController;
-use App\Http\Controllers\ContactoController;
 use App\Http\Controllers\ReunionsController;
 use App\Http\Controllers\CursoController;
 use App\Http\Controllers\BancoController;
@@ -15,6 +14,7 @@ use App\Http\Controllers\NotificacionesController;
 use App\Http\Controllers\ReportesController;
 use App\Http\Controllers\ConfiguracionController;
 use App\Http\Controllers\ChatController;
+use App\Http\Controllers\ContactoController;
 use App\Http\Controllers\CalendaryController;
 use App\Http\Controllers\AuditoriaController;
 use App\Http\Controllers\DetallesController;
@@ -43,7 +43,7 @@ Route::get('/home', [App\Http\Controllers\HomeController::class, 'index'])->name
 
 Auth::routes();
 
-Route::get('/home', [App\Http\Controllers\HomeController::class, 'index'])->name('home');
+Route::post('/home', [App\Http\Controllers\HomeController::class, 'index'])->name('home');
 
 
 
@@ -53,7 +53,6 @@ Route::group(['middleware' => ['auth']], function(){
     Route::resource('blogs', BlogController::class);
     Route::resource('curso', CursoController::class);
     Route::resource('biografias', BiografiaController::class);
-    Route::resource('contacto', ContactoController::class);
     Route::resource('reunions', ReunionsController::class);
     Route::resource('bancos', BancoController::class);
     Route::resource('notificaciones', NotificacionesController::class);
@@ -73,37 +72,12 @@ Route::group(['middleware' => ['auth']], function(){
     Route::post('/pasarelas/getDataStudent', [PasarelaController::class, 'getDataStudent'])->name('pasarelas.getDataStudent');
     Route::post('/pasarelas/getInvoice', [PasarelaController::class, 'getInvoice'])->name('pasarelas.getInvoice');
 
-     
+
 });
 
 Route::patch('/usuarios/{id}', 'UsuarioController@update')->name('usuarios.update');
 
-
-
-
-/* // Middleware en la definición de ruta
-Route::get('/configuracion', 'ConfiguracionController@metodo')->middleware('auth');  */
-
 Route::get('/api/latest-blog', [BlogController::class, 'getLatestBlog']);
-
-
-/* Route::post('detalles/{blog}', 'DetallesController@store')->name('detalles.store'); */
-
-
-/* Route::get('/blogs', [BlogController::class, 'index'])->name('blogs.index');
-Route::get('/blogs/create', [BlogController::class, 'create'])->name('blogs.create');
-Route::post('/blogs', [BlogController::class, 'store'])->name('blogs.store');
-Route::get('/blogs/{blog}/edit', [BlogController::class, 'edit'])->name('blogs.edit');
-Route::put('/blogs/{blog}', [BlogController::class, 'update'])->name('blogs.update');
-Route::delete('/blogs/{blog}', [BlogController::class, 'destroy'])->name('blogs.destroy');
-
-// Rutas para los detalles
-Route::get('/detalles', [DetallesController::class, 'index'])->name('detalles.index');
-Route::get('/detalles/create', [DetallesController::class, 'create'])->name('detalles.create');
-Route::post('/detalles', [DetallesController::class, 'store'])->name('detalles.store');
-Route::get('/detalles/{blog}', [DetallesController::class, 'show'])->name('detalles.show');
-
-Route::post('/eliminar-biografia', 'BiografiaController@eliminar')->name('biografia.eliminar'); */
 
 
 // routes/web.php
@@ -146,4 +120,23 @@ Route::get('/pasarelas/{blog_id}', 'PasarelasController@index')->name('pasarelas
 Route::get('/pasarela/{blog}', 'PasarelaController@show')->name('pasarela.show');
 
 Route::post('/consultar_estudiante', 'PagoController@consultarEstudiante');
+
+Route::post('/guardar-fecha', [PersonaController::class, 'guardarFecha'])->name('guardarFecha');
+
+
+Route::post('biografias/like/{biografia}', [BiografiaController::class, 'like'])->name('biografias.like');
+Route::get('/generar-recibo/{pago}', [PagoController::class, 'generarRecibo'])->name('generar-recibo');
+
+Route::post('/consultarEstudiante', [PagoController::class, 'consultarEstudiante'])->name('consultarEstudiante');
+
+
+Route::get('/contacto', [ContactoController::class, 'index'])->name('contacto.index');
+
+
+Route::post('/verificar-estado', [PagoController::class, 'verificarEstado'])->name('verificarEstado');
+
+Route::post('/store', [BlogController::class, 'store'])->name('store');
+
+
+Route::post('/obtenerUltimaDiferencia', 'PagoController@obtenerUltimaDiferencia')->name('obtenerUltimaDiferencia');
 

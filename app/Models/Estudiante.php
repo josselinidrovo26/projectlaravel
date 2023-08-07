@@ -13,7 +13,7 @@ class Estudiante extends Model
     use HasFactory;
 
     protected $table = 'estudiante';
-    protected $fillable = ['curso', 'persona_id', 'periodo','usuarioid'];
+    protected $fillable = ['curso', 'persona_id', 'periodo',];
 
     public function persona()
     {
@@ -24,7 +24,7 @@ class Estudiante extends Model
     {
         return $this->hasMany(Pago::class, 'estudiante_id');
     }
-  
+
 
 
 }

@@ -15,6 +15,12 @@ class CreateAuditoriaTable extends Migration
     {
         Schema::create('auditoria', function (Blueprint $table) {
             $table->id();
+            $table->string('codigo');
+            $table->string('modulo');
+            $table->string('interfaz');
+            $table->string('usuario');
+            $table->string('fecha-hora');
+            $table->string('sentencia');
             $table->timestamps();
         });
     }

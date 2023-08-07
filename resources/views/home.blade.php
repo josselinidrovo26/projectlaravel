@@ -11,87 +11,97 @@
                     <div class="cardt">
                         <div class="card-body">
                                 <div class="row">
-                                    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
-                                    <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.1.3/js/bootstrap.bundle.min.js"></script>
-
-                                    <div class="col-md-4 col-xl-4">
-                                        <div class="bg-c-blue order-card">
-                                                <div class="card-block">
-                                                <h5>Usuarios</h5>
+                                    <div class="col-md-2">
+                                        <div class="card" style="background-color: #ffffff;  margin-bottom: 15px; border: 2px solid #007BFF;">
+                                                <div class="card-block" >
+                                                <h5 class="card-title" style="color: rgb(0, 0, 0); font-size: 1rem;">Usuarios</h5>
                                                     @php
                                                      use App\Models\User;
                                                     $cant_usuarios = User::count();
                                                     @endphp
-                                                    <h2 class="text-right"><i class="fa fa-users f-left"></i><span>{{$cant_usuarios}}</span></h2>
-                                                    <p class="m-b-0 text-right"><a href="/usuarios" class="text-white">Ver más</a></p>
+                                                    <h2 class="text-right"><i class="fa fa-users f-left" style="color: rgb(255, 238, 0);"></i><span>{{$cant_usuarios}}</span></h2>
+                                                    <p class="m-b-0 text-right"><a href="/usuarios">Ver más</a></p>
                                                 </div>
                                             </div>
                                         </div>
-                                    <div class="col-md-4 col-xl-4">
-                                        <div class="bg-c-green order-card">
+                                        <div class="col-md-2">
+                                            <div class="card" style="background-color: #ffffff;  margin-bottom: 15px; border: 2px solid #007BFF;">
+                                                    <div class="card-block" >
+                                                    <h5 class="card-title" style="color: rgb(0, 0, 0); font-size: 1rem;">Estudiantes</h5>
+                                                        @php
+                                                         use App\Models\Estudiante;
+                                                        $cant_estudiantes = Estudiante::count();
+                                                        @endphp
+                                                        <h2 class="text-right"><i class="fa fa-graduation-cap f-left" style="color: rgb(255, 238, 0);"></i><span>{{$cant_estudiantes}}</span></h2>
+                                                        <p class="m-b-0 text-right"><a href="/estudiantes">Ver más</a></p>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                    <div class="col-md-2">
+                                        <div class="card" style="background-color: #ffffff;  margin-bottom: 15px; border: 2px solid #007BFF;">
                                             <div class="card-block">
-                                            <h5>Roles</h5>
+                                            <h5 class="card-title" style="color: rgb(0, 0, 0); font-size: 1rem;">Roles</h5>
                                                 @php
                                                 use Spatie\Permission\Models\Role;
                                                  $cant_roles = Role::count();
                                                 @endphp
-                                                <h2 class="text-right"><i class="fa fa-user-lock f-left"></i><span>{{$cant_roles}}</span></h2>
-                                                <p class="m-b-0 text-right"><a href="/roles" class="text-white">Ver más</a></p>
+                                                <h2 class="text-right"><i class="fa fa-user-lock f-left" style="color: rgb(255, 238, 0);"></i><span>{{$cant_roles}}</span></h2>
+                                                <p class="m-b-0 text-right"><a href="/roles">Ver más</a></p>
                                             </div>
                                         </div>
                                     </div>
-                                    <div class="col-md-4 col-xl-4">
-                                        <div class="bg-c-pink order-card">
+                                    <div class="col-md-2">
+                                        <div class="card" style="background-color: #ffffff;  margin-bottom: 15px; border: 2px solid #007BFF;">
                                             <div class="card-block">
-                                                <h5>Eventos</h5>
+                                                <h5 class="card-title" style="color: rgb(0, 0, 0); font-size: 1rem;">Eventos</h5>
                                                 @php
                                                  use App\Models\Blog;
                                                 $cant_blogs = Blog::count();
                                                 @endphp
-                                                <h2 class="text-right"><i class="fa fa-blog f-left"></i><span>{{$cant_blogs}}</span></h2>
-                                                <p class="m-b-0 text-right"><a href="/blogs" class="text-white">Ver más</a></p>
+                                                <h2 class="text-right"><i class="fa fa-calendar f-left" style="color: rgb(255, 238, 0);"></i><span>{{$cant_blogs}}</span></h2>
+                                                <p class="m-b-0 text-right"><a href="/blogs">Ver más</a></p>
                                             </div>
                                         </div>
                                     </div>
 
-                                    <div class="col-md-4 col-xl-4">
-                                        <div class="bg-c-pink order-card">
+                                    <div class="col-md-2">
+                                        <div class="card" style="background-color: #ffffff;  margin-bottom: 15px; border: 2px solid #007BFF;">
                                             <div class="card-block">
-                                                <h5>Cursos</h5>
+                                                <h5 class="card-title" style="color: rgb(0, 0, 0); font-size: 1rem;">Cursos</h5>
                                                 @php
                                                  use App\Models\Curso;
                                                 $cant_cursos = Curso::count();
                                                 @endphp
-                                                <h2 class="text-right"><i class="fa fa-blog f-left"></i><span>{{$cant_cursos}}</span></h2>
-                                                <p class="m-b-0 text-right"><a href="/curso" class="text-white">Ver más</a></p>
+                                                <h2 class="text-right"><i class="fa fa-blog f-left" style="color: rgb(255, 238, 0);"></i><span>{{$cant_cursos}}</span></h2>
+                                                <p class="m-b-0 text-right"><a href="/curso">Ver más</a></p>
                                             </div>
                                         </div>
                                     </div>
 
-                                    <div class="col-md-4 col-xl-4">
-                                        <div class="bg-c-blue order-card">
+                                    <div class="col-md-2">
+                                        <div class="card" style="background-color: #ffffff;  margin-bottom: 15px; border: 2px solid #007BFF;">
                                             <div class="card-block">
-                                                <h5>Reuniones</h5>
+                                                <h5 class="card-title" style="color: rgb(0, 0, 0); font-size: 1rem;">Reuniones</h5>
                                                 @php
                                                  use App\Models\Reunion;
                                                 $cant_reunions = Reunion::count();
                                                 @endphp
-                                                <h2 class="text-right"><i class="fa fa-blog f-left"></i><span>{{$cant_reunions}}</span></h2>
-                                                <p class="m-b-0 text-right"><a href="/reunions" class="text-white">Ver más</a></p>
+                                                <h2 class="text-right"><i class="fa fa-handshake f-left" style="color: rgb(255, 238, 0);"></i><span>{{$cant_reunions}}</span></h2>
+                                                <p class="m-b-0 text-right"><a href="/reunions" >Ver más</a></p>
                                             </div>
                                         </div>
                                     </div>
 
-                                    <div class="col-md-4 col-xl-4">
-                                        <div class="bg-c-green order-card">
+                                    <div class="col-md-2">
+                                        <div class="card" style="background-color: #ffffff;  margin-bottom: 15px; border: 2px solid #007BFF;">
                                             <div class="card-block">
-                                                <h5>Publicaciones</h5>
+                                                <h5 class="card-title" style="color: rgb(0, 0, 0); font-size: 1rem;">Evidencias</h5>
                                                 @php
                                                  use App\Models\Biografias;
                                                 $cant_biografias = Biografias::count();
                                                 @endphp
-                                                <h2 class="text-right"><i class="fa fa-blog f-left"></i><span>{{$cant_biografias}}</span></h2>
-                                                <p class="m-b-0 text-right"><a href="/biografias" class="text-white">Ver más</a></p>
+                                                <h2 class="text-right"><i class="fa fa-pencil-alt f-left"  style="color: rgb(255, 238, 0);"></i><span>{{$cant_biografias}}</span></h2>
+                                                <p class="m-b-0 text-right"><a href="/biografias">Ver más</a></p>
                                             </div>
                                         </div>
                                     </div>
@@ -105,19 +115,19 @@
             </div>
 
              {{--    BOTON FLOTANTE --}}
-             <div class="container-boton">
+            {{--  <div class="container-boton">
                 <a href="#">
                     <img class="boton" src="{{ asset('assets/images/icons8-charla-64.png') }}" alt="Icono de charla" id="myButton">
                 </a>
-            </div>
+            </div> --}}
 
-            {{-- VENTANA MODAL --}}
+            {{-- VENTANA MODAL --}} {{-- REVISAR MODAL --}}
 
-            <div id="myModal" class="modal">
+        {{--     <div id="myModal" class="modal">
                 <div class="modal-content">
                     <span class="close">&times;</span>
            <link rel="stylesheet" href="{{ asset('web/css/estilochat.css') }}">
-
+ --}}
 
 	{{-- <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.5.0/css/all.css" integrity="sha384-B4dIYHKNBt8Bc12p+WXckhzcICo0wtJAoU8YZTY5qE0Id1GSseTk6S+L3BlXeVIU" crossorigin="anonymous">
 	 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
@@ -244,7 +254,7 @@
               </div>
 
         </div>
-    </section>
+
 
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
 <script>
@@ -312,5 +322,5 @@
 
 
 
-
+</section>
 @endsection

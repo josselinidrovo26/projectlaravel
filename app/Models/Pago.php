@@ -12,9 +12,9 @@ class Pago extends Model
 {
     protected $table = 'pagos';
     use HasFactory;
-    protected $fillable = ['abono', 'diferencia', 'estado', 'estudiante_id', 'eventoPago'];
+    protected $fillable = ['abono', 'diferencia', 'estado', 'estudiante_id', 'eventoPago', 'pagoHistorico'];
 
-    
+
 
     public function blog()
     {

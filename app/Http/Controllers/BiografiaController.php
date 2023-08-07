@@ -6,6 +6,7 @@ use Illuminate\Support\Facades\Hash;
 use Spatie\Permission\Models\Role;
 use Illuminate\Validation\Rule;
 use Illuminate\Support\Arr;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Http\Request;
 use App\Models\Biografias;
 
@@ -53,7 +54,7 @@ class BiografiaController extends Controller
             $image[] = $image_url;
         }
     }
-  
+
     $biografia = new Biografias();
     $biografia->image = implode('|', $image);
     $biografia->tituloBiografia = $request->tituloBiografia;
@@ -64,33 +65,51 @@ class BiografiaController extends Controller
     return back();
 }
 
-/* CONTROLAR LOS LIKES */
-
 public function like(Request $request, Biografias $biografia)
 {
-    try {
-        // Verificar si el usuario ya ha dado clic en "Me gusta" antes
-        $user = $request->user();
-        $liked = $user->biografiasLiked()->where('biografia_id', $biografia->id)->exists();
+    if (Auth::check()) {
+        // Increment the 'likes' count in the database
+        $biografia->increment('likes');
 
-        if ($liked) {
-            // Restar 1 al contador de likes
-            $biografia->decrement('likes');
-            // Eliminar la relación entre el usuario y la biografía (No me gusta)
-            $user->biografiasLiked()->detach($biografia->id);
-            return response()->json(['success' => true, 'likes' => $biografia->likes]);
-        } else {
-            // Sumar 1 al contador de likes
-            $biografia->increment('likes');
-            // Crear la relación entre el usuario y la biografía (Me gusta)
-            $user->biografiasLiked()->attach($biografia->id);
-            return response()->json(['success' => true, 'likes' => $biografia->likes]);
-        }
-    } catch (\Exception $e) {
-        return response()->json(['success' => false, 'error' => $e->getMessage()]);
+        // Return the updated 'likes' count in the response
+        return response()->json(['success' => true, 'likes' => $biografia->likes]);
     }
+
+    return response()->json(['success' => false, 'message' => 'User not authenticated']);
 }
 
+
+public function update(Request $request, Biografias $biografia)
+{
+    $request->validate([
+        'tituloBiografia' => 'required',
+        'contenidoBiografia' => 'required',
+        'image.*' => 'image|mimes:jpeg,png,jpg,gif|max:2048',
+    ]);
+
+    $image = array();
+    if ($files = $request->file('image')) {
+        foreach ($files as $file) {
+            $image_name = md5(rand(1000, 10000));
+            $ext = strtolower($file->getClientOriginalExtension());
+            $image_full_name = $image_name . '.' . $ext;
+            $upload_path = 'www/projectlaravel/';
+            $image_url = $upload_path . $image_full_name;
+            $file->move($upload_path, $image_full_name);
+            $image[] = $image_url;
+        }
+    }
+
+    $biografia->image = implode('|', $image);
+    $biografia->tituloBiografia = $request->tituloBiografia;
+    $biografia->contenidoBiografia = $request->contenidoBiografia;
+    $biografia->usuarioid = auth()->user()->id;
+    // Omit the 'likes' field to prevent overwriting the existing value
+    // $biografia->likes = $currentLikes;
+    $biografia->save();
+
+    return redirect()->route('biografias.index');
+}
 
 
 

@@ -8,13 +8,6 @@ use App\Models\Reunion;
 
 class ReunionsController extends Controller
 {
-    function __construct()
-    {
-        $this-> middleware('permission:ver-reunion|crear-reunion|editar-reunion|borrar-reunion')->only('index');
-        $this-> middleware('permission:crear-reunion', ['only'=>['create', 'store']]);
-        $this-> middleware('permission:editar-reunion', ['only'=>['edit', 'update']]);
-        $this-> middleware('permission:borrar-reunion', ['only'=>['destroy']]);
-    }
 
     /**
      * Display a listing of the resource.
@@ -34,7 +27,7 @@ class ReunionsController extends Controller
      */
     public function create()
     {
-        $cursos = Curso::pluck('name', 'id')->all();
+        $cursos = Curso::pluck('name', 'name')->all();
 
         return view('reunions.crear', compact('cursos'));
     }
@@ -51,7 +44,7 @@ class ReunionsController extends Controller
         request()->validate([
             'tituloreuniones' => 'required',
             'descripcion' => 'required',
-            'fechareuniones'=> 'required',
+            'fechareuniones' => 'required|date|after:today',
             'inicio'=> 'required',
             'fin'=> 'required',
             'enlace'=> 'required',
@@ -63,8 +56,16 @@ class ReunionsController extends Controller
 
         $input = $request->all();
         $reunion = Reunion::create($input);
-        Reunion::create($request->all());
-        $reunion->curso = Curso::find($request->input('curso'))->name;
+
+        // Asignar el nombre del curso a la propiedad participantes
+        $curso = Curso::find($request->input('curso'));
+        if ($curso) {
+            $reunion->participantes = $curso->name;
+            $reunion->save();
+        } else {
+            // Manejar el caso en que no se encuentra el curso
+        }
+
         return redirect()->route('reunions.index');
     }
 
@@ -102,7 +103,7 @@ class ReunionsController extends Controller
     {
         request()->validate([
             'descripcion' => 'required',
-            'fechareuniones'=> 'required',
+            'fechareuniones' => 'required|date|after:today',
             'inicio'=> 'required',
             'fin'=> 'required',
             'enlace'=> 'required',

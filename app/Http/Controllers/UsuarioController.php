@@ -19,7 +19,7 @@ class UsuarioController extends Controller
         $this-> middleware('permission:crear-usuario', ['only'=>['create', 'store']]);
         $this-> middleware('permission:editar-usuario', ['only'=>['edit', 'update']]);
         $this-> middleware('permission:borrar-usuario', ['only'=>['destroy']]);
-    } 
+    }
     /**
      * Display a listing of the resource.
      *
@@ -27,7 +27,7 @@ class UsuarioController extends Controller
      */
     public function index(Request $request)
     {
-        $usuarios = User::with('persona')->paginate(2000);
+        $usuarios = User::with('persona')->paginate(5);
         $personas = Persona::pluck('nombre', 'id')->all();
         return view('usuarios.index', compact('usuarios', 'personas'));
     }

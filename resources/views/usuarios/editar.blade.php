@@ -27,7 +27,7 @@
                             <div class="col-xs-12 col-sm-12 col-md-12">
                                 <div class="form-group">
                                     <label for="cedula">Cédula de Identidad *</label>
-                                    {!! Form::text('persona[cedula]', $user->persona->cedula ?? null, ['class' => 'form-control']) !!}
+                                    {!! Form::text('persona[cedula]', $user->persona->cedula ?? null, ['class' => 'form-control', 'maxlength' => 10]) !!}
                                 </div>
                             </div>
                             <div class="col-xs-12 col-sm-12 col-md-12">
@@ -46,13 +46,23 @@
                             <div class="col-xs-12 col-sm-12 col-md-12">
                                 <div class="form-group">
                                     <label for="password">Contraseña *</label>
-                                    {!! Form::password('password', ['class' => 'form-control']) !!}
+                                        <div class="toggle-password">
+                                            {!! Form::password('password', ['class' => 'form-control password-input']) !!}
+                                            <span class="eye-icon">
+                                                <i class="far fa-eye"></i>
+                                            </span>
+                                        </div>
                                 </div>
                             </div>
                             <div class="col-xs-12 col-sm-12 col-md-12">
                                 <div class="form-group">
                                     <label for="confirm-password">Confirmar contraseña *</label>
-                                    {!! Form::password('confirm-password', ['class' => 'form-control']) !!}
+                                        <div class="toggle-password">
+                                            {!! Form::password('confirm-password', ['class' => 'form-control password-input']) !!}
+                                            <span class="eye-icon">
+                                                <i class="far fa-eye"></i>
+                                            </span>
+                                        </div>
                                 </div>
                             </div>
                             <div class="col-xs-12 col-sm-12 col-md-12">
@@ -71,5 +81,34 @@
             </div>
         </div>
     </div>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
+  {{--   <script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/js/all.min.js"></script> --}}
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
+<script>
+    $(document).ready(function () {
+        $('.eye-icon').on('click', function () {
+            const passwordInput = $(this).siblings('.password-input');
+            const type = passwordInput.attr('type') === 'password' ? 'text' : 'password';
+            passwordInput.attr('type', type);
+            $(this).find('i').toggleClass('fa-eye fa-eye-slash');
+        });
+    });
+</script>
+
+
 </section>
 @endsection
+<style>
+    .toggle-password {
+        cursor: pointer;
+        position: relative;
+    }
+    .toggle-password .eye-icon {
+        position: absolute;
+        right: 8px;
+        top: 50%;
+        transform: translateY(-50%);
+    }
+
+</style>

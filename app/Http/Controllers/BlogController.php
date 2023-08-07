@@ -9,6 +9,7 @@ use Spatie\Permission\Models\Role;
 use Illuminate\Validation\Rule;
 use Illuminate\Support\Arr;
 use App\Models\Blog;
+use App\Models\Pago;
 use App\Models\Estudiante;
 use App\Models\Detalles;
 
@@ -30,7 +31,7 @@ class BlogController extends Controller
      */
     public function index()
     {
-        
+
         $user = auth()->user();
 
         if ($user->persona->estudiante && $user->persona->estudiante->curso) {
@@ -39,7 +40,7 @@ class BlogController extends Controller
         } else {
             $blogs = Blog::paginate(10);
         }
-        
+
 
         return view('blogs.index', compact('blogs', 'user'));
     }
@@ -69,22 +70,42 @@ class BlogController extends Controller
             'titulo' => 'required',
             'contenido' => 'required',
             'cuota' => '',
-            'pago' => 'required',
+            'pago' => 'required|date|after_or_equal:today',
         ]);
-
-        $estudiante = $user->persona->estudiante;
 
         $blog = new Blog();
         $blog->titulo = $request->input('titulo');
         $blog->contenido = $request->input('contenido');
         $blog->cuota = $request->input('cuota');
         $blog->pago = $request->input('pago');
-        $blog->cursoblog = $estudiante->curso;
-        $blog->periodoblog = $estudiante->periodo;
+        $blog->cursoblog = $user->persona->estudiante ? $user->persona->estudiante->curso : null;
+        $blog->periodoblog = $user->persona->estudiante ? $user->persona->estudiante->periodo : null;
         $blog->save();
+
+        // Encontrar los estudiantes que pertenecen al mismo curso y periodo
+        $estudiantes = Estudiante::where('curso', $blog->cursoblog)
+            ->where('periodo', $blog->periodoblog)
+            ->get();
+
+        // Crear registros de pago para cada estudiante relacionado con el nuevo blog
+        foreach ($estudiantes as $estudiante) {
+            $cuotaBlog = $blog->cuota;
+            $abono = $blog->cuota;
+            $diferenciaPago = $cuotaBlog - $abono;
+
+            Pago::create([
+                'estudiante_id' => $estudiante->id,
+                'eventoPago' => $blog->id,
+                'abono' => 0,
+                'pagoHistorico'=>0,
+                'diferencia' => $diferenciaPago,
+                'estado' => 'No pagado',
+            ]);
+        }
 
         return redirect()->route('blogs.index');
     }
+
 
 
 
@@ -124,7 +145,7 @@ class BlogController extends Controller
             'titulo' => 'required',
             'contenido'=> 'required',
             'cuota'=> '',
-            'pago'=> 'required',
+            'pago' => 'required|date|after_or_equal:today',
         ]);
         $blog->update($request->all());
         return redirect()->route('blogs.index');
@@ -143,7 +164,7 @@ class BlogController extends Controller
         $detalles = Detalles::where('blog_id', $blog->id)->exists();
 
         if ($detalles) {
-            return redirect()->route('blogs.index')->with('alert', 'Primero debe eliminar los detalles del evento');
+            return redirect()->route('blogs.index')->with('alert', 'Tiene detalles agregados a este evento, primero elimínelos');
         }
 
         $blog->delete();

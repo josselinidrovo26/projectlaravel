@@ -8,14 +8,14 @@
         <script src="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.13/js/select2.min.js"></script>
        {{--  Descargar reportes --}}
        <script src="https://cdnjs.cloudflare.com/ajax/libs/FileSaver.js/2.0.5/FileSaver.min.js"></script>
-       <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.10.2/jspdf.umd.min.js"></script>
+  {{--      <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.10.2/jspdf.umd.min.js"></script> --}}
 <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.17.4/xlsx.full.min.js"></script>
 
-<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.10.2/jspdf.umd.min.js"></script>
+{{-- <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.10.2/jspdf.umd.min.js"></script> --}}
 <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
 
 
-<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.19/jspdf.plugin.autotable.min.js"></script>
+{{-- <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.19/jspdf.plugin.autotable.min.js"></script> --}}
 
 
 
@@ -156,12 +156,6 @@
                                                             '<td>$' + pago.diferencia + '</td>' +
                                                             '<td>' + pago.estado + '</td>' +
                                                             '<td>' + pago.blog.cuota + '</td>' +
-                                                            '<td><form action="{{ route('reportes.destroy', ':id') }}" method="POST">' +
-                                                            '@csrf' +
-                                                            '@method('DELETE')' +
-                                                            '@can('borrar-pago')' +
-                                                            '<button type="submit" class="btn btn-danger btn-delete" data-pago-id="' + pago.id + '"><i class="fas fa-trash"></i></button>' +
-                                                            '@endcan' +
                                                             '</form></td>' +
                                                             '</tr>';
 
@@ -384,16 +378,16 @@
 
 
                                 <table class="table table-striped" id="detallesTable">
-                                    <thead>
+                                    <thead style="background-color: #6777ef">
                                         <tr>
-                                         <th>ID</th>
-                                          <th>Cédula</th>
-                                            <th>Estudiante</th>
-                                            <th>Abono</th>
-                                            <th>Diferencia</th>
-                                            <th>Estado</th>
-                                            <th>Total</th>
-                                            <th>Acción</th>
+                                         <th style="color: #fff">ID</th>
+                                          <th style="color: #fff">Cédula</th>
+                                            <th style="color: #fff">Estudiante</th>
+                                            <th style="color: #fff">Abono</th>
+                                            <th style="color: #fff">Diferencia</th>
+                                            <th style="color: #fff">Estado</th>
+                                            <th style="color: #fff">Total</th>
+
                                         </tr>
                                     </thead>
                                     <tbody>
@@ -416,28 +410,59 @@
         imprimirTabla();
     });
 
-    function imprimirTabla() {
-        var tablaContenido = document.getElementById('contenidotabla');
-        var eventoSeleccionado = document.getElementById('eventoSeleccionado').innerText;
-        var win = window.open('', '', 'width=800, height=600');
-        filename: 'reporte_' + eventoSeleccionado + '.pdf',
-        win.document.write('<html><head><title>Reporte</title></head><body>');
-        win.document.write('<h3>Evento: ' + document.getElementById('eventoSeleccionado').innerText + '</h3>');
-        win.document.write(tablaContenido.outerHTML);
-        win.document.write('</body></html>');
-        win.document.close();
-        win.print();
-        win.close();
 
-        // Crea el PDF con el contenido de la tabla
-        html2pdf().from(tablaContenido).set(options).save();
-    }
+    function imprimirTabla() {
+    var tablaContenido = document.getElementById('contenidotabla');
+    var eventoSeleccionado = document.getElementById('eventoSeleccionado').innerText;
+    var logoUrl = '{{ asset("img/logo.png") }}'; // Ruta de la imagen utilizando el helper asset de Laravel
+
+    var win = window.open('', '', 'width=800, height=600');
+
+    // Agrega la imagen al inicio del contenido
+    var contenidoHTML = `
+        <html>
+        <head>
+            <title>Reporte</title>
+            <style>
+                table {
+                    border-collapse: collapse;
+                    width: 100%;
+                    border: 1px solid black; /* Agregar borde a la tabla */
+                }
+                th, td {
+                    border: 1px solid black; /* Agregar borde a las celdas */
+                    padding: 8px;
+                    text-align: left;
+                }
+            </style>
+        </head>
+        <body>
+            <img src="${logoUrl}" alt="Logo" style="width: 100px; height: auto;">
+            <h3>Evento: ${eventoSeleccionado}</h3>
+            ${tablaContenido.outerHTML}
+        </body>
+        </html>`;
+
+    win.document.write(contenidoHTML);
+    win.document.close();
+    win.print();
+    win.close();
+
+
+
+
+
+
+    // Crea el PDF con el contenido de la tabla
+   /*  var options = { filename: 'Unidad Educativa Blanca García-reporte de pagos-' + eventoSeleccionado + '.pdf' };
+    html2pdf().from(tablaContenido).set(options).save(); */
+}
 
 
     function descargarExcel() {
         var tablaContenido = document.getElementById('contenidotabla');
         var wb = XLSX.utils.table_to_book(tablaContenido);
-        XLSX.writeFile(wb, 'reporte.xlsx');
+        XLSX.writeFile(wb, 'Unidad Educativa Blanca García-reporte de pagos.xlsx');
     }
 
     // Evento para el botón de descarga de Excel (si se desea mantener)

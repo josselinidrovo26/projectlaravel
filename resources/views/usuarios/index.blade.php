@@ -14,7 +14,7 @@
 
 
                             @can('crear-usuario')
-                          <a class="btn btn-warning" href="{{ route('usuarios.create') }}">Nuevo</a><br><br>
+                         {{--  <a class="btn btn-warning" href="{{ route('usuarios.create') }}">Nuevo</a><br><br> --}}
                           @endcan
                            {{--BOTON BUSCAR --}}
                            <div class="input-group mb-3">

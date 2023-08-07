@@ -18,6 +18,7 @@ class AddColumsToAuditoriaTable extends Migration
             $table->text('modulo');
             $table->text('interfaz');
             $table->text('usuario');
+            $table->text('sentencia');
         });
     }
 

@@ -10,7 +10,7 @@ class Persona extends Model
 {
     protected $table = 'persona';
     use HasFactory;
-    protected $fillable = ['nombre', 'cedula', 'edad', 'rol', 'usuario_id'];
+    protected $fillable = ['nombre', 'cedula', 'edad', 'rol', 'fecha', 'usuario_id'];
 
 
 

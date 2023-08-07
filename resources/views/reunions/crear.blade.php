@@ -101,12 +101,10 @@
                                             <div class="col-xs-12 col-sm-12 col-md-12">
                                                 <div class="form-group">
                                                     <label for="modonotificar">Modo alerta</label>
-                                                        <select class="form-control" name="modonotificar">
-                                                            <option value="Notificación">Notificación</option>
-                                                            <option value="Correo electrónico">Correo electrónico</option>
-                                                          </select>
+                                                    <input class="form-control" name="modonotificar" type="text" value="Notificación" readonly>
                                                 </div>
                                             </div>
+
                                         </td>
 
                                         <td>

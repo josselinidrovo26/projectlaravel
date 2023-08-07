@@ -3,20 +3,14 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
-
+use Illuminate\Validation\Rule;
 use App\Models\Detalles;
 use App\Models\Blog;
 
 
 class DetallesController extends Controller
 {
-   /*  function __construct()
-    {
-        $this-> middleware('permission:ver-detalles|crear-detalles|editar-detalles|borrar-detalles')->only('index');
-        $this-> middleware('permission:crear-detalles', ['only'=>['create', 'store']]);
-        $this-> middleware('permission:editar-detalles', ['only'=>['edit', 'update']]);
-        $this-> middleware('permission:borrar-detalles', ['only'=>['destroy']]);
-    } */
+
 
     /**
      * Display a listing of the resource.
@@ -25,8 +19,8 @@ class DetallesController extends Controller
      */
     public function index()
     {
-        $blogs = Blog::with('detalles')->paginate(2);
 
+        $blogs = Blog::with('detalles')->paginate(2);
         foreach ($blogs as $blog) {
             $sumaPrecio = $blog->detalles->sum('precio');
             $blog->sumaPrecio = $sumaPrecio;
@@ -55,10 +49,15 @@ class DetallesController extends Controller
      */
     public function store(Request $request)
     {
-        $request->validate([
-            'actividad' => 'required|unique:actividad',
-            'precio' => 'required',
-            'blog_id' => '',
+            $request->validate([
+                'actividad' => [
+                    'required',
+                    Rule::unique('detalles')->where(function ($query) use ($request) {
+                        return $query->where('blog_id', $request->input('blog_id'));
+                    }),
+                ],
+                'precio' => 'required',
+                'blog_id' => 'required',
         ]);
 
         $blogId = $request->input('blog_id');
@@ -79,7 +78,6 @@ class DetallesController extends Controller
 
         return redirect()->route('blogs.index')->with('success', 'Detalles agregados correctamente.');
     }
-
 
 
 
@@ -141,19 +139,16 @@ class DetallesController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function destroy(Detalles $detalle)
+        public function destroy(Detalles $detalle)
     {
-        $blog = $detalle->blog; // Obtener el blog asociado al detalle
-
-        $detalle->delete(); // Eliminar el detalle
-
-        // Recalcula la suma de los precios de los detalles relacionados
+        $blog = $detalle->blog;
+        $detalle->delete();
         $cuota = $blog->detalles()->sum('precio');
 
-        // Actualiza el campo 'cuota' en el modelo 'Blog'
         $blog->cuota = $cuota;
         $blog->save();
 
         return redirect()->route('blogs.index');
     }
-}
+
+    }

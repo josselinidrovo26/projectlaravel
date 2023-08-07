@@ -217,51 +217,40 @@
                                             </p>
                                          </div>
 
-                                         <div class="card-footer text-left">
-                                            <button class="card-link like-button" data-biografia-id="{{ $biografia->id }}">
-                                                <i class="fa fa-heart{{ $biografia->liked ? ' text-danger' : '' }}"></i>
-                                                Me gusta
-                                            </button>
-                                            <span class="likes-count" data-biografia-id="{{ $biografia->id }}">{{ $biografia->likes }}</span>&nbsp;me gusta
-                                            <input type="hidden" name="biografia_id" value="{{ $biografia->id }}">
-                                            <a href="#" class="card-link" onclick="toggleCommentsSection(event)">
-                                                <i class="fa fa-comment"></i> Comentar
-                                            </a>
+                                       <!-- Add this within the <div class="card-footer text-left"> block -->
+                                        <div class="card-footer text-left">
+                                            <a href="#" class="card-link like-button" data-biografia-id="{{ $biografia->id }}"><i class="fa fa-heart"></i> Me gusta</a>
+                                            <span class="likes-count">{{ $biografia->likes }}</span>
                                         </div>
+                                            <!-- Place this at the end of your blade template, before the closing </body> tag -->
+                                                       <!-- Place this at the end of your blade template, before the closing </body> tag -->
+                                                       <script>
+                                                        $(document).ready(function() {
+                                                            $('.like-button').on('click', function(event) {
+                                                                event.preventDefault();
+                                                                var biografiaId = $(this).data('biografia-id');
 
-                                       {{--  CONTROLADOR DE LIKES --}}
-                                       <script>
-                                        $(document).ready(function() {
-                                            $('.like-button').click(function() {
-                                                var biografiaId = $(this).data('biografia-id');
-                                                var biografiaForm = $(this).closest('.card-footer').find('form');
-
-                                                $.ajax({
-                                                    url: '{{ route('biografias.like', ['biografia' => $biografia->id]) }}',
-                                                    method: 'POST',
-                                                    headers: {
-                                                        'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
-                                                    },
-                                                    data: {
-                                                        biografia_id: biografiaForm.find('input[name="biografia_id"]').val()
-                                                    },
-                                                    success: function(response) {
-                                                        if (response.success) {
-                                                            // Actualiza el conteo de likes
-                                                            $('.likes-count[data-biografia-id="' + biografiaId + '"]').text(response.likes);
-                                                        } else {
-                                                            console.log(response.error);
-                                                        }
-                                                    },
-                                                    error: function() {
-                                                        console.log('Error al actualizar los likes');
-                                                    }
-                                                });
-                                            });
-                                        });
-                                    </script>
-
-
+                                                                $.ajax({
+                                                                    url: "{{ route('biografias.like', ':biografiaId') }}".replace(':biografiaId', biografiaId),
+                                                                    type: 'POST',
+                                                                    headers: {
+                                                                        'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+                                                                    },
+                                                                    success: function(response) {
+                                                                        if (response.success) {
+                                                                            var likesCount = response.likes;
+                                                                            $(`.like-button[data-biografia-id="${biografiaId}"]`).next('.likes-count').text(likesCount + ' like');
+                                                                        } else {
+                                                                            alert('User not authenticated. Please log in to like.');
+                                                                        }
+                                                                    },
+                                                                    error: function(xhr) {
+                                                                        alert('An error occurred. Please try again later.');
+                                                                    }
+                                                                });
+                                                            });
+                                                        });
+                                                    </script>
 
 
 
@@ -276,10 +265,6 @@
                         </div>
                      </div>
                 </div>
-
-
-
-
     @endsection
 
 

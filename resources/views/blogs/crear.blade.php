@@ -21,7 +21,6 @@
                                     <span aria-hidden="true">&times;</span>
                                 </button>
                             </div>
-
                             @endif
 
                            <form action="{{ route('blogs.store')}}" method="POST">
@@ -45,7 +44,7 @@
                                 <table>
 
                                     <tr>
-                                       
+
                                         <td>
                                             <div class="col-xs-12 col-sm-12 col-md-12">
                                                 <div class="form-group">

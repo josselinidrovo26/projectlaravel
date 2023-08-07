@@ -27,57 +27,89 @@
                                         <input type="text" id="cedula" name="cedula" value="{{ $user->persona->cedula }}" class="form-control" readonly>
                                     </div>
                                     <div class="form-group">
+                                        <label for="fecha">Fecha de nacimiento:</label>
+                                        <input type="date" id="fecha" name="fecha" value="{{ $user->persona->fecha }}" class="form-control" max="{{ date('Y-m-d') }}">
+                                    </div>
+                                    <div class="form-group">
                                         <label for="edad">Edad:</label>
-                                        <input type="number" id="edad" name="edad" value="{{ $user->persona->edad }}" class="form-control">
+                                        <input type="number" id="edad" name="edad" value="{{ $user->persona->edad}}" class="form-control" readonly>
                                     </div>
                                     @if (Auth::check())
-                                    <button id="editarEdad" class="btn btn-primary">Editar</button>
+                                    <button id="editarFecha" class="btn btn-primary">Editar</button>
+                                    <form id="formGuardarFecha" method="POST" action="{{ route('guardarFecha') }}" style="display: none;">
+                                        @csrf
+                                        <input type="hidden" name="usuario_id" value="{{ $user->id }}">
+                                        <input type="hidden" name="fecha" id="fechaHidden">
+                                        <input type="hidden" name="edad" id="edadHidden"> <!-- Nuevo campo de edad oculto -->
+                                        <button type="submit" class="btn btn-primary">Guardar cambios</button>
+                                    </form>
                                     @endif
-                                   {{--  <p>Fecha de Nacimiento: {{ $user->persona->fecha_nacimiento }}</p> --}}
+
                                 </div>
                             </div>
                         </div>
                     </div>
-                    <div class="col-md-6">
-                        <div class="card">
-                            <div class="card-body">
-                                <h5 class="card-title">Actualizar Foto de Perfil</h5>
-                                <form action="{{-- {{ route('profile.updatePicture') }} --}}" method="POST" enctype="multipart/form-data">
-                                    @csrf
-                                    <div class="form-group">
-                                        <label for="profile_picture">Seleccionar nueva foto:</label>
-                                        <div class="custom-file">
-                                            <input type="file" id="profile_picture" name="profile_picture" accept="image/*" class="custom-file-input" required>
-                                            <label class="custom-file-label" for="profile_picture">Elegir archivo</label>
-                                        </div>
-                                    </div>
-                                    <button type="submit" class="btn btn-primary">Guardar</button>
-                                </form>
-                            </div>
-                        </div>
-                        <div class="card mt-4">
-                            <img src="{{-- ruta de la fotografía seleccionada --}}" class="card-img-top" alt="Foto de perfil">
-                            <div class="card-body">
-                                <h5 class="card-title">Foto de Perfil</h5>
-                                <p class="card-text">Aquí se mostrará la foto de perfil seleccionada.</p>
-                            </div>
-                        </div>
-                    </div>
+
                 </div>
             </div>
         </div>
     </div>
-</section>
-@endsection
-
-<!-- Scripts -->
-@if (Auth::check())
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
 <script>
-    document.getElementById("editarEdad").addEventListener("click", function() {
-        document.getElementById("edad").readOnly = false;
+    $(document).ready(function () {
+        // Función para calcular la edad a partir de la fecha de nacimiento
+        function calcularEdad() {
+            const fechaNacimiento = new Date($('#fecha').val());
+            const hoy = new Date();
+            let edad = hoy.getFullYear() - fechaNacimiento.getFullYear();
+            const mesActual = hoy.getMonth();
+            const diaActual = hoy.getDate();
+            const mesNacimiento = fechaNacimiento.getMonth();
+            const diaNacimiento = fechaNacimiento.getDate();
+
+            if (mesActual < mesNacimiento || (mesActual == mesNacimiento && diaActual < diaNacimiento)) {
+                edad--;
+            }
+
+            $('#edad').val(edad);
+        }
+
+        // Calcular edad al cargar la página
+        calcularEdad();
+
+        // Calcular edad cada vez que se cambie la fecha
+        $('#fecha').on('change', function () {
+            calcularEdad();
+        });
+
+        // Habilitar edición de la edad si se hace clic en el botón "Editar"
+        $('#editarEdad').on('click', function () {
+            $('#edad').prop('readonly', false);
+        });
+
+          // Habilitar edición de la fecha y ocultar el botón "Editar"
+        $('#editarFecha').on('click', function () {
+            $('#fecha').prop('readonly', false);
+            $('#editarFecha').hide();
+            $('#formGuardarFecha').show();
+        });
+
+         // Al enviar el formulario para guardar los cambios, ocultar el formulario y mostrar el botón "Editar"
+         $('#formGuardarFecha').on('submit', function (event) {
+            event.preventDefault();
+            const nuevaFecha = $('#fecha').val();
+            const nuevaEdad = $('#edad').val(); // Obtener la edad actualizada
+            $('#fechaHidden').val(nuevaFecha);
+            $('#edadHidden').val(nuevaEdad); // Establecer el valor de la edad oculta
+            $(this).hide();
+            $('#editarFecha').show();
+            this.submit(); // Envía el formulario al controlador
+        });
     });
 </script>
-@endif
+</section>
+
+@endsection
 
 <!-- Estilos CSS (Bootstrap) -->
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.6.0/css/bootstrap.min.css">

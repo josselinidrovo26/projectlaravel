@@ -14,8 +14,9 @@
     <link href="{{ asset('assets/css/sweetalert.css') }}" rel="stylesheet" type="text/css"/>
     <link href="{{ asset('assets/css/select2.min.css') }}" rel="stylesheet" type="text/css"/>
 
+    <meta name="csrf-token" content="{{ csrf_token() }}">
 
-<script src="{{ asset('node_modules/bootstrap/dist/js/bootstrap.min.js') }}"></script>
+{{-- <script src="{{ asset('node_modules/bootstrap/dist/js/bootstrap.min.js') }}"></script> --}}
 
 
 @yield('page_css')

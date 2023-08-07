@@ -17,6 +17,7 @@ class CreatePersonaTable extends Migration
             $table->id();
             $table->string('nombre');
             $table->string('cedula')->unique();
+            $table->string('fecha');
             $table->string('edad');
             $table->string('rol');
             $table->unsignedBigInteger('usuario_id');

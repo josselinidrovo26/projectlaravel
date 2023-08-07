@@ -15,7 +15,7 @@ return [
 
     'accepted'             => 'El campo :attribute debe ser aceptado.',
     'active_url'           => 'El campo :attribute no es una URL válida.',
-    'after'                => 'El campo :attribute debe ser una fecha posterior a :date.',
+    'after'                 => 'El campo :attribute debe ser una fecha posterior a hoy.',
     'after_or_equal' => 'El campo :attribute debe ser una fecha igual o posterior a hoy.',
     'alpha'                => 'El campo :attribute solo puede contener letras.',
     'alpha_dash'           => 'El campo :attribute solo puede contener letras, números, guiones y guiones bajos.',
@@ -95,7 +95,7 @@ return [
     'numeric'              => 'El campo :attribute debe ser un número.',
     'password'             => 'La contraseña es incorrecta.',
     'present'              => 'El campo :attribute debe estar presente.',
-    'regex'                => 'El formato del campo :attribute es inválido.',
+    'regex'                => 'El formato del campo :attribute debe contener solo números.',
     'required'             => 'El campo :attribute es obligatorio.',
     'required_if'          => 'El campo :attribute es obligatorio cuando el campo :other es :value.',
     'required_unless'      => 'El campo :attribute es requerido a menos que :other se encuentre en :values.',

@@ -18,7 +18,7 @@ class CreateBiografiasTable extends Migration
             $table->string('tituloBiografia');
             $table->text('contenidoBiografia');
             $table->text('image');
-            $table->int('likes');
+            $table->integer('likes')->default(0);
             $table->timestamps();
         });
 

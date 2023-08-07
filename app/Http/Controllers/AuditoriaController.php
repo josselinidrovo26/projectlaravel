@@ -16,8 +16,8 @@ class AuditoriaController extends Controller
      */
     public function index()
     {
-        $audit = Auditoria::all();
-        return view('auditoria.index',  ['audits' => $audit]);
+        $audits = Auditoria::all();
+        return view('auditoria.index', ['audits' => $audits]);
     }
 
     /**
@@ -85,4 +85,9 @@ class AuditoriaController extends Controller
     {
         //
     }
+
+
+
+
+
 }

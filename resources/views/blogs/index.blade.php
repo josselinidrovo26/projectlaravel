@@ -26,7 +26,10 @@
 
                             <div class="table-responsive">
                               @if ($blogs->isEmpty())
-                                    <p>No hay registros disponibles.</p>
+                              <div class="text-center">
+                                <i class="fas fa-exclamation-triangle fa-2x mb-3 text-muted"></i>
+                                <p class="text-muted">No existen registros de pagos realizados.</p>
+                            </div>
                                 @else
                                     <table class="table table-striped mt-2">
                                         <thead style="background-color: #6777ef">
@@ -48,17 +51,17 @@
                                                     <td>
                                                         <form action="{{ route('blogs.destroy', $blog->id) }}" method="POST" class="d-inline">
                                                             @can('editar-blog')
-                                                                <a class="btn btn-info btn-sm" href="{{ route('blogs.edit', $blog->id) }}" title="editar"><i class="fas fa-edit"></i></a>
+                                                                <a class="btn btn-info btn-sm" href="{{ route('blogs.edit', $blog->id) }}" title="editar evento"><i class="fas fa-edit"></i></a>
                                                             @endcan
                                                             @csrf
                                                             @method('DELETE')
                                                             @can('borrar-blog')
-                                                                <button type="submit" class="btn btn-danger btn-sm" title="eliminar"><i class="fas fa-trash"></i></button>
+                                                                <button type="submit" class="btn btn-danger btn-sm" title="eliminar evento"><i class="fas fa-trash"></i></button>
                                                             @endcan
                                                         </form>
 
                                                         <!-- Botón del modal de agregar -->
-                                                        <button type="button" class="btn btn-success btn-sm" data-toggle="modal" data-target="#myModal{{ $blog->id }}" title="agregar"><i class="fas fa-plus"></i></button>
+                                                        <button type="button" class="btn btn-success btn-sm" data-toggle="modal" data-target="#myModal{{ $blog->id }}" title="agregar detalle"><i class="fas fa-plus"></i></button>
 
 
                                                         <!-- Modal -->
@@ -72,7 +75,19 @@
                                                                             <span aria-hidden="true">&times;</span>
                                                                         </button>
                                                                     </div>
+
                                                                     <div class="modal-body">
+                                                                        @if ($errors->any())
+                                                                        <div class="alert alert-dark alert-dismissible fade show" role="alert">
+                                                                            <strong>Revise los campos!</strong>
+                                                                            @foreach ( $errors->all() as $error )
+                                                                            <span class="badge badge-danger">{{$error}}</span>
+                                                                            @endforeach
+                                                                            <button type="button" class="close" data-dismiss="alert" aria-label="close">
+                                                                                <span aria-hidden="true">&times;</span>
+                                                                            </button>
+                                                                        </div>
+                                                                        @endif
                                                                         <!-- Contenido del formulario del modal -->
                                                                         <form action="{{ route('detalles.store') }}" method="POST">
                                                                             @csrf
@@ -109,11 +124,11 @@
                                                         </div>
 
                                                         {{-- BOTON DEL MODAL PARA VER --}}
-                                                        <a class="btn btn-primary btn-sm" data-toggle="modal" data-target="#Modal2{{ $blog->id }}" title="ver"><i class="fas fa-eye"></i></a>
+                                                        <a class="btn btn-primary btn-sm" data-toggle="modal" data-target="#Modal2{{ $blog->id }}" title="ver detalle"><i class="fas fa-eye"></i></a>
 
                                                         <!-- Modal -->
                                                         <div class="modal fade" id="Modal2{{ $blog->id }}" tabindex="-1" role="dialog" aria-labelledby="Modal2Label">
-                                                            <div class="modal-dialog" role="document">
+                                                            <div class="modal-dialog modal-dialog-scrollable" role="document">
                                                                 <div class="modal-content">
                                                                     <div class="modal-header">
                                                                         <h5 class="modal-title" id="Modal2Label">Resumen de detalles del evento</h5>
@@ -121,7 +136,7 @@
                                                                             <span aria-hidden="true">&times;</span>
                                                                         </button>
                                                                     </div>
-                                                                    <div class="modal-body">
+                                                                    <div class="modal-body" style="max-height: 400px; overflow-y: scroll;">
                                                                         <div class="suma-precio{{ $blog->id }}">Total: ${{ number_format($blog->detalles->sum('precio'), 2) }}</div><br>
 
 
@@ -153,11 +168,10 @@
                                                                                     </td>
                                                                                 </tr>
                                                                             @endforeach
+
                                                                             </tbody>
                                                                         </table>
-                                                                        <div class="pagination justify-content-end">
-                                                                            {!! $blogs->links() !!}
-                                                                        </div>
+
                                                                     </div>
                                                                 </div>
                                                             </div>
@@ -165,28 +179,48 @@
 
                                                     {{--     SUMA DE PRECIOS --}}
                                                     <script>
-                                                        function eliminarDetalle(detalleId, blogId) {
-                                                            // Realizar la solicitud de eliminación usando AJAX o fetch
-                                                            // ...
+                                                        function eliminarDetalle(event, detalleId, blogId) {
+                                                            event.preventDefault();
 
-                                                            const precioElement = document.querySelector(`#detalle-${detalleId} .precio`);
-                                                            const precio = parseFloat(precioElement.textContent.replace('$', ''));
-                                                            const sumaPrecioElement = document.querySelector(`.suma-precio${blogId}`);
-                                                            const sumaPrecio = parseFloat(sumaPrecioElement.textContent.replace("Suma del campo 'precio': $", ''));
-                                                            sumaPrecioElement.textContent = `Suma del campo 'precio': $${sumaPrecio - precio}`;
+                                                            // Send an AJAX request to delete the detail from the database
+                                                            $.ajax({
+                                                                url: `/detalles/${detalleId}`,
+                                                                type: 'DELETE',
+                                                                headers: {
+                                                                    'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+                                                                },
+                                                                success: function (data) {
+                                                                    // On success, remove the detail row from the table
+                                                                    const detalleRow = document.querySelector(`#detalle-${detalleId}`);
+                                                                    detalleRow.parentNode.removeChild(detalleRow);
 
-                                                            const detalleRow = document.querySelector(`#detalle-${detalleId}`);
-                                                            detalleRow.parentNode.removeChild(detalleRow);
+                                                                    // Update the total sum of prices in the modal
+                                                                    const precioElement = detalleRow.querySelector('.precio');
+                                                                    const precio = parseFloat(precioElement.textContent.replace('$', ''));
+                                                                    const sumaPrecioElement = document.querySelector(`.suma-precio${blogId}`);
+                                                                    const sumaPrecio = parseFloat(sumaPrecioElement.textContent.replace("Suma del campo 'precio': $", ''));
+                                                                    sumaPrecioElement.textContent = `Suma del campo 'precio': $${sumaPrecio - precio}`;
+
+                                                                    // Reload the current page after successful deletion
+                                                                    location.reload();
+                                                                },
+                                                                error: function (error) {
+                                                                    console.log('Error deleting detail:', error);
+                                                                    alert('Error deleting detail. Please try again.');
+                                                                }
+                                                            });
                                                         }
                                                     </script>
+
+
 
 
                                                     @if ($user->persona->estudiante && $user->persona->estudiante->curso)
 
                                                        <!-- Botón de pagar -->
                                                         <a class="btn btn-warning btn-sm" href="{{ route('pasarelas.show', $blog->id) }}" title="pagar"><i class="fas fa-money-bill"></i></a>
-                                                    @endif      
-                                                    
+                                                    @endif
+
                                                     </td>
                                                 </tr>
                                             @endforeach
