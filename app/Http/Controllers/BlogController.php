@@ -97,9 +97,9 @@ class BlogController extends Controller
                 'estudiante_id' => $estudiante->id,
                 'eventoPago' => $blog->id,
                 'abono' => 0,
-                'pagoHistorico'=>0,
                 'diferencia' => $diferenciaPago,
                 'estado' => 'No pagado',
+                'usuarioid'=> $user->id
             ]);
         }
 
@@ -149,7 +149,6 @@ class BlogController extends Controller
         ]);
         $blog->update($request->all());
         return redirect()->route('blogs.index');
-
     }
 
     /**

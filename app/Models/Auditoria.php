@@ -8,7 +8,7 @@ use Illuminate\Database\Eloquent\Model;
 class Auditoria extends Model
 {
     protected $table = 'auditoria';
-    protected $fillable = ['fecha_hora', 'sentencia', 'usuario', 'modulo', 'interfaz', 'codigo'];
+    protected $fillable = ['fecha_hora', 'sentencia', 'usuario', 'modulo', 'interfaz', 'codigo','sentencia'];
     public function getFechaHoraAttribute()
     {
         return $this->attributes['fecha-hora'];

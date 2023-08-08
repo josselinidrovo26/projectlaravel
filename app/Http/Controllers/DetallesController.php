@@ -6,7 +6,7 @@ use Illuminate\Http\Request;
 use Illuminate\Validation\Rule;
 use App\Models\Detalles;
 use App\Models\Blog;
-
+use App\Models\Pago;
 
 class DetallesController extends Controller
 {
@@ -72,6 +72,11 @@ class DetallesController extends Controller
         // Recalcula la suma de los precios de los detalles relacionados
         $cuota = $blog->detalles()->sum('precio');
 
+        $pagos = Pago::where('eventoPago', $blogId)->get();
+        foreach ($pagos as $pago) {
+            $pago->diferencia = $cuota;
+            $pago->save();
+        }
         // Actualiza el campo 'cuota' en el modelo 'Blog'
         $blog->cuota = $cuota;
         $blog->save();

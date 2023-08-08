@@ -43,11 +43,11 @@ class PagoController extends Controller
         $pagos = $query->paginate(10);
 
         // Calcular la diferencia y actualizarla en la base de datos
-        foreach ($pagos as $pago) {
-            $diferencia = $pago->blog->cuota - $pago->abono;
-            $pago->diferencia = $diferencia;
-            $pago->save();
-        }
+        // foreach ($pagos as $pago) {
+        //     $diferencia = $pago->blog->cuota - $pago->abono;
+        //     $pago->diferencia = $diferencia;
+        //     $pago->save();
+        // }
 
         $cedulaNoEncontrada = null;
 

@@ -56,9 +56,10 @@
                                 <div class="section-header custom-header">
                                     <h3 class="page__heading">
                                         <strong>Importe:</strong>
-                                        <input type="text" name="" id="cuotaInput" max="{{ $blog->cuota }}" value="{{$blog->cuota}}" style="background-color: transparent; color: white; border: none;"
+                                        <input type="text" name="" id="cuotaInput" max="{{ $pagos->diferencia }}" value="{{$pagos->diferencia}}" style="background-color: transparent; color: white; border: none;"
                                         pattern="[0-9]+(\.[0-9]+)?" oninput="validateCuota(this)">
-                                       
+                                        <input type="hidden" name="" id="abonoInput" max="{{ $pagos->abono }}" value="{{$pagos->abono}}" style="background-color: transparent; color: white; border: none;"
+                                        pattern="[0-9]+(\.[0-9]+)?" oninput="validateCuota(this)">
                                     </h3> </div>
 
                                 <p><b>Título del blog: </b>{{ $blog->titulo }}</p>
@@ -109,7 +110,7 @@
                                         
                                         axios.post('/pasarelas/getDataStudent', {
                                             status: 'Pagado',
-                                            monto: cuota,
+                                            monto: parseFloat(document.getElementById('cuotaInput').value),
                                             blog_id: {{ $blog->id }}
                                         })
                                         .then(function (response) {
@@ -121,13 +122,9 @@
                                             var fechaFormateada = dia + '/' + mes + '/' + anio;
                                             document.getElementById('fechaPago').innerText = fechaFormateada;
                                             document.getElementById('nombreEstudiante').innerText = response.data.student.nombre;
-                                            document.getElementById('cuota').innerText =  cuota;
-                                            document.getElementById('diferencia').innerText =  response.data.payment.cuota - cuota;
-                                            if( response.data.payment.cuota - cuota ==0 ){
-                                                document.getElementById('status').innerText =  "Pagado";
-                                            }else {
-                                                document.getElementById('status').innerText =  "Abonado";
-                                            }
+                                            document.getElementById('cuota').innerText =  parseFloat(document.getElementById('cuotaInput').value);
+                                            document.getElementById('diferencia').innerText =  response.data.payment.diferencia;
+                                            document.getElementById('status').innerText =  response.data.payment.estado;
                                         })
                                         .catch(function (error) {
                                             console.log(error);

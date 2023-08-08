@@ -96,13 +96,16 @@ class PasarelaController extends Controller
     public function getDataStudent(Request $request)
     {
         $user = auth()->user();
+        $studentData = $user->persona;
+        $pagos = Pago::where('eventoPago', $request->blog_id)->where('estudiante_id',  $studentData->estudiante->id)->latest()
+        ->first();
         // Obtén los datos del estudiante y los datos de pago guardados en el blog
         $studentData = $user->persona;
         $paymentData = Blog::find($request->blog_id);
         $status = 'Pagado';
         $cuotaPaymentData = (float) $paymentData->cuota;
-        $cuotaRequest = (float) $request->monto;
-        $diferencia = $cuotaPaymentData - $cuotaRequest;
+        $cuotaRequest = (float) $request->monto + $pagos->abono;
+        $diferencia = $cuotaPaymentData - $cuotaRequest ;
         if ($cuotaPaymentData != $cuotaRequest) {
             $status = 'Abonado';
         }
@@ -115,13 +118,16 @@ class PasarelaController extends Controller
         $pago->usuarioid = auth()->user()->id;
         $pago->save();
 
-       
+        $pagos2 = Pago::where('eventoPago', $request->blog_id)->where('estudiante_id',  $studentData->estudiante->id)->latest()
+        ->first();
+
         // Combina los datos del estudiante y los datos de pago en un solo array
         $data = [
             'student' => $studentData,
-            'payment' => $paymentData,
-            'status' => $status
+            'payment' =>  $pagos2,
+            'status' => $pagos2->estado
         ];
+
 
         // Devuelve los datos como respuesta JSON
         return response()->json($data);
