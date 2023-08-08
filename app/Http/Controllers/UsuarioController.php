@@ -27,7 +27,10 @@ class UsuarioController extends Controller
      */
     public function index(Request $request)
     {
-        $usuarios = User::with('persona')->paginate(5);
+        $usuarios = User::whereHas('persona', function ($query) {
+            $query->where('rol', '!=', 'ESTUDIANTE');
+        })->with('persona')->paginate(10);
+
         $personas = Persona::pluck('nombre', 'id')->all();
         return view('usuarios.index', compact('usuarios', 'personas'));
     }

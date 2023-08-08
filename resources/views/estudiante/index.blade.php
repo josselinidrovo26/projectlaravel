@@ -2,6 +2,8 @@
 
 @section('content')
 <section class="section">
+
+
   <div class="section-header">
       <h3 class="page__heading">Registro de estudiantes</h3>
   </div>
@@ -33,33 +35,35 @@
                                   <th style="color:#fff;">Acciones</th>
                               </thead>
                               <tbody>
-                                @foreach ($usuarios as $usuario)
-                                @if ($usuario->persona && $usuario->persona->rol === 'Estudiante')
+                                @foreach ($estudiantes as $estudiante)
+                                @if ($estudiante->persona && $estudiante->persona->rol === 'ESTUDIANTE')
                                 <tr class="usuario-row">
-                                  <td>{{ $usuario->id }}</td>
-                                  <td>{{ $usuario->persona->cedula }}</td>
-                                  <td>{{ $usuario->persona->nombre }}</td>
-                                  <td>{{ $usuario->email }}</td>
-                                  @if ($usuario->persona->estudiante)
-                                  <td>{{ $usuario->persona->estudiante->periodo }}</td>
-                                  <td>{{ $usuario->persona->estudiante->curso }}</td>
+                                  <td>{{ $estudiante->id }}</td>
+                                  <td>{{ $estudiante->persona->cedula }}</td>
+                                  <td>{{ $estudiante->persona->nombre }}</td>
+                                  <td>{{ $estudiante->persona->user->email }}</td>
+                                  @if ($estudiante->periodo)
+                                  <td>{{ $estudiante->periodo }}</td>
+                                  <td>{{ $estudiante->curso }}</td>
                                   @endif
                                   <td>
-
+                                    <div class="btn-group" role="group" aria-label="Acciones">
                                     @can('editar-estudiante')
-                                    @if ($usuario->persona->estudiante)
-                                    <a class="btn btn-primary" href="{{ route('estudiante.edit', $usuario->persona->estudiante->id) }}"><i class="fas fa-edit"></i></a>
+                                    @if ($estudiante->periodo)
+                                    <a class="btn btn-primary btn-sm"   href="{{ route('estudiante.edit', $estudiante->id)}}" title = "editar estudiante"><i class="fas fa-edit"></i></a>
+
                                     @endif
                                     @endcan
 
                                     @can('borrar-estudiante')
-                                         @if ($usuario->persona->estudiante)
-                                        {!! Form::open(['method' => 'DELETE', 'route' => ['estudiante.destroy', $usuario->persona->estudiante->id], 'style' => 'display:inline']) !!}
-                                            {!! Form::button('<i class="fas fa-trash"></i>', ['type' => 'submit', 'class' => 'btn btn-danger']) !!}
+                                         @if ($estudiante->periodo)
+                                        {!! Form::open(['method' => 'DELETE', 'route' => ['estudiante.destroy', $estudiante->id], 'style' => 'display:inline']) !!}
+                                            {!! Form::button('<i class="fas fa-trash"></i>', ['type' => 'submit', 'class' => 'btn btn-danger btn-sm', 'title' => 'eliminar estudiante']) !!}
                                         {!! Form::close() !!}
                                     @endif
 
                                     @endcan
+                                    </div>
                                   </td>
                                 </tr>
                                 @endif
@@ -78,7 +82,7 @@
           </div>
       </div>
     </section>
-    @section('scripts')
+
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script>
         $(document).ready(function() {
@@ -95,5 +99,7 @@
             });
         });
     </script>
-@endsection
+
+
+
 @endsection

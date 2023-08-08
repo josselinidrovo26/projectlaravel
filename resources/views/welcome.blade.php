@@ -150,3 +150,12 @@
 
     </body>
 </html>
+
+<style>
+    a {
+    color: #bae4fc;
+    text-decoration: none;
+    background-color: transparent;
+    -webkit-text-decoration-skip: objects;
+}
+</style>

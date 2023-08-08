@@ -33,7 +33,7 @@
                                   <th style="color:#fff;">Acciones</th>
                               </thead>
                               <tbody>
-                                @foreach ($usuarios->where('persona.rol', '!=', 'Estudiante') as $usuario)
+                                @foreach ($usuarios->where('persona.rol', '!=', 'ESTUDIANTE') as $usuario)
                                 <tr class="usuario-row">
                                       <td style="display: none;">{{ $usuario->id }}</td>
                                       @if ($usuario->persona)

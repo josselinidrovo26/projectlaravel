@@ -53,7 +53,7 @@
 .sub-menu {
     display: none;
     padding-left: 10px;
-    background-color: white;
+    background-color: rgb(255, 255, 255);
 }
 
 .nav-link[aria-expanded="true"] .arrow::after {

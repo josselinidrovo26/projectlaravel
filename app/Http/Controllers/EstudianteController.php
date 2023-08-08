@@ -34,10 +34,13 @@ class EstudianteController extends Controller
      */
     public function index()
     {
-        $usuarios = User::with('persona.estudiante')->get();
-        $estudiantes = User::paginate(2000); // Ajusta el número de elementos por página según tus necesidades
+       /*  $usuarios = User::with('persona.estudiante')->get();
+        $estudiantes = User::paginate(20);
 
-        return view('estudiante.index', compact('usuarios', 'estudiantes'));
+        return view('estudiante.index', compact('usuarios', 'estudiantes')); */
+        $estudiantes = Estudiante::with('persona.user')->paginate(10);
+
+        return view('estudiante.index', compact('estudiantes'));
     }
 
     /**
@@ -49,7 +52,8 @@ class EstudianteController extends Controller
     {
         $cursos = Curso::pluck('name', 'name')->all();
         $periodos = Periodo::pluck('nombrePeriodo', 'nombrePeriodo')->all();
-        return view('estudiante.crear', compact('periodos', 'cursos'));
+        $roles = Role::pluck('name','name')->all();
+        return view('estudiante.crear', compact('periodos', 'cursos', 'roles'));
     }
 
     /**
@@ -64,8 +68,9 @@ class EstudianteController extends Controller
         'curso' => 'required',
         'periodo' => 'required',
         'email' => 'required|unique:users,email',
-        'password' => 'required|same:confirm_password',
+        'password' => 'required|same:confirm-password',
         'nombre' => 'required',
+        'rol' => 'required',
         'cedula' => 'required|unique:persona,cedula',
     ]);
 
@@ -83,7 +88,8 @@ class EstudianteController extends Controller
     $persona = Persona::create([
         'nombre' => $input['nombre'],
         'cedula' => $input['cedula'],
-        'rol' => $rolEstudiante->name,
+       /*  'rol' => $rolEstudiante->name, */
+        'rol' => $input['rol'],
         'usuario_id' => $user->id,
     ]);
 
@@ -93,9 +99,11 @@ class EstudianteController extends Controller
         'curso' => $input['curso'],
         'usuarioid' =>  auth()->user()->id,
     ]);
-  
+
     $persona->user()->associate($user);
-    
+    $rol = $input['rol'];
+    $user->assignRole($rol);
+
     $persona->save();
 
     return redirect()->route('estudiante.index');
@@ -122,7 +130,6 @@ class EstudianteController extends Controller
      */
     public function edit($id)
     {
-
         $estudiante = Estudiante::findOrFail($id);
 
         if ($estudiante) {
@@ -130,11 +137,15 @@ class EstudianteController extends Controller
             $user = $persona->user;
             $cursos = Curso::pluck('name', 'name')->all();
             $periodos = Periodo::pluck('nombrePeriodo', 'nombrePeriodo')->all();
-            return view('estudiante.editar', compact('estudiante', 'user', 'cursos', 'periodos'));
+            $roles = Role::pluck('name', 'name')->all();
+            $personRole = $persona->roles->pluck('name', 'name')->all();
+
+            return view('estudiante.editar', compact('estudiante', 'user', 'cursos', 'periodos', 'roles'));
         }
 
         return redirect()->route('estudiante.index')->with('error', 'El estudiante no existe');
     }
+
 
 
     /**
@@ -153,6 +164,7 @@ class EstudianteController extends Controller
             'password' => 'nullable|same:confirm-password',
             'confirm-password' => 'nullable',
             'estudiante.periodo' => 'required',
+            'rol' => 'required',
             'estudiante.curso' => 'required',
 
         ]);
@@ -179,6 +191,10 @@ class EstudianteController extends Controller
         $estudiante->updated_at = Carbon::now();
         $estudiante->save();
 
+        DB::table('model_has_roles')->where('model_id', $id)->delete();
+         $rol = $input['rol'];
+         $user->syncRoles([$rol]);
+
         return redirect()->route('estudiante.index');
     }
 
@@ -202,4 +218,7 @@ class EstudianteController extends Controller
 
     return redirect()->route('estudiante.index')->with('error', 'El estudiante no existe');
 }
+
+
+
 }

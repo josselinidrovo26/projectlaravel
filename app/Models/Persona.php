@@ -5,6 +5,7 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use App\Models\Estudiante;
+use Illuminate\Support\Str;
 
 class Persona extends Model
 {
@@ -23,6 +24,17 @@ class Persona extends Model
     public function estudiante()
     {
         return $this->hasOne(Estudiante::class);
+    }
+
+    protected static function boot()
+    {
+        parent::boot();
+
+        static::saving(function ($persona) {
+            foreach ($persona->getAttributes() as $key => $value) {
+                $persona->$key = Str::upper($value);
+            }
+        });
     }
 
 

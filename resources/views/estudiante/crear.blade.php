@@ -2,7 +2,9 @@
 
 @section('content')
 <section class="section">
+
     <div class="section-header">
+
         <h3 class="page__heading">Crear estudiante</h3>
     </div>
     <div class="section-body">
@@ -47,22 +49,33 @@
                         <div class="row">
                             <div class="col-xs-12 col-sm-12 col-md-12">
                                 <div class="form-group">
-                                    <label for="email">Correo electrónico *</label>
+                                    <label for="email">Correo electrónico *  Ejemplo: nombre.primerapellidoInicialsegundoapellido@edu.com</label>
                                     {!! Form::text('email', null, array('class' => 'form-control')) !!}
                                 </div>
                             </div>
                             <div class="col-xs-12 col-sm-12 col-md-12">
                                 <div class="form-group">
                                     <label for="password">Contraseña *</label>
-                                    {!! Form::password('password', array('class' => 'form-control')) !!}
+                                    <div class="toggle-password">
+                                        {!! Form::password('password', array('class' => 'form-control  password-input')) !!}
+                                        <span class="eye-icon">
+                                            <i class="far fa-eye"></i>
+                                        </span>
+                                    </div>
                                 </div>
                             </div>
                             <div class="col-xs-12 col-sm-12 col-md-12">
                                 <div class="form-group">
                                     <label for="confirm-password">Confirmar contraseña*</label>
-                                    {!! Form::password('confirm_password', array('class' => 'form-control')) !!}
+                                    <div class="toggle-password">
+                                        {!! Form::password('confirm-password', array('class' => 'form-control  password-input')) !!}
+                                        <span class="eye-icon">
+                                            <i class="far fa-eye"></i>
+                                        </span>
+                                    </div>
                                 </div>
                             </div>
+
                         </div>
                         {{-- Campos para la tabla estudiante --}}
                         <div class="row">
@@ -81,6 +94,12 @@
 
                                 </div>
                             </div>
+                            <div class="col-xs-12 col-sm-12 col-md-12">
+                                <div class="form-group">
+                                    <label for="rol">Rol*</label>
+                                    {!! Form::select('rol', $roles, null, array('class' => 'form-control')) !!}
+                                </div>
+                            </div>
 
                         </div>
 
@@ -95,5 +114,39 @@
             </div>
         </div>
     </div>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
+{{--   <script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/js/all.min.js"></script> --}}
+  <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
+<script>
+  $(document).ready(function () {
+      $('.eye-icon').on('click', function () {
+          const passwordInput = $(this).siblings('.password-input');
+          const type = passwordInput.attr('type') === 'password' ? 'text' : 'password';
+          passwordInput.attr('type', type);
+          $(this).find('i').toggleClass('fa-eye fa-eye-slash');
+      });
+  });
+</script>
 </section>
+
 @endsection
+
+
+
+
+
+<style>
+  .toggle-password {
+      cursor: pointer;
+      position: relative;
+  }
+  .toggle-password .eye-icon {
+      position: absolute;
+      right: 8px;
+      top: 50%;
+      transform: translateY(-50%);
+  }
+
+</style>
+
