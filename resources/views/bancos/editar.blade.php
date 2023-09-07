@@ -40,8 +40,8 @@
                                     <div class="form-floating">
                                         <label for="Tipocuenta">Tipo de cuenta</label>
                                         <select class="form-control" name="Tipocuenta">
-                                            <option value="Ahorros" {{ $banco->Tipocuenta === 'Ahorros' ? 'selected' : '' }}>Ahorros</option>
-                                            <option value="Corriente" {{ $banco->Tipocuenta === 'Corriente' ? 'selected' : '' }}>Corriente</option>
+                                            <option value="Ahorros" {{ $banco->Tipocuenta === 'Ahorros' ? 'selected' : '' }}>AHORROS</option>
+                                            <option value="Corriente" {{ $banco->Tipocuenta === 'Corriente' ? 'selected' : '' }}>CORRIENTE</option>
                                         </select>
                                     </div>
                                     <br>
@@ -71,12 +71,15 @@
                                                 </div>
                                             </div>
 
+                                            <div class="col-xs-12 col-sm-12 col-md-12">
+                                                <div class="form-group">
+                                                    <label for="cedula">Teléfono/Celular</label>
+                                                    <input class="form-control" name="Telefono" type="text" value="{{ $banco->telefono }}" maxlength="10" oninput="this.value = this.value.replace(/[^0-9]/g, '');">
+                                                </div>
+                                            </div>
 
-
-
-
-                                <div class="col-xs-12 col-sm-12 col-md-12">
-                                    <center>
+                                            <div class="col-xs-12 col-sm-12 col-md-12">
+                                        <center>
                                     <button type="submit" class="btn btn-primary">Guardar</button>
 
                                     <button type="reset" class="btn btn-danger" onclick="/bancos" >Cancelar</button>

@@ -47,7 +47,8 @@ class BancoController extends Controller
             'Tipocuenta'=> 'required',
             'numcuenta' => 'required|regex:/^[0-9]+$/',
             'nameUser'=> 'required',
-            'cedula'=> 'required'
+            'cedula'=> 'required',
+            'Telefono'=> 'required'
         ]);
         Banco::create($request->all());
         return redirect()->route('bancos.index');
@@ -89,7 +90,8 @@ class BancoController extends Controller
             'Tipocuenta'=> 'required',
             'numcuenta' => 'required|regex:/^[0-9]+$/',
             'nameUser'=> 'required',
-            'cedula'=> 'required'
+            'cedula'=> 'required',
+            'Telefono'=> 'required'
         ]);
         $banco->update($request->all());
         return redirect()->route('bancos.index');

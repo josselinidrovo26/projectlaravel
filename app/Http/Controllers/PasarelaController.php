@@ -10,7 +10,7 @@ use Illuminate\Http\Request;
 
 class PasarelaController extends Controller
 {
-    private $blog; 
+    private $blog;
     /**
      * Display a listing of the resource.
      *
@@ -18,14 +18,10 @@ class PasarelaController extends Controller
      */
     public function index($blog_id)
     {
-        // Obtén los datos del blog utilizando el modelo Blog
         $blog = Blog::find($blog_id);
-
-        // Verifica si se encontró el blog
         if (!$blog) {
-            abort(404); // Puedes personalizar la respuesta en caso de que el blog no exista
+            abort(404);
         }
-        // Pasa los datos del blog a la vista "pasarelas.index"
         return view('pasarelas.index', ['blog' => $blog]);
     }
 
@@ -51,9 +47,6 @@ class PasarelaController extends Controller
             'monto' => '',
 
         ]);
-
-
-        // Redirige a la página de pasarela.index junto con el ID del blog
         return redirect()->route('pasarela.index');
 
     }
@@ -68,7 +61,6 @@ class PasarelaController extends Controller
     {
         $user = auth()->user();
         $studentData = $user->persona;
-        // Obtén los datos del blog utilizando el modelo Blog
         $blog = Blog::find($blog_id);
         $pagos = Pago::where('eventoPago', $blog_id)->where('estudiante_id',  $studentData->estudiante->id)->latest()
         ->first();
@@ -76,7 +68,7 @@ class PasarelaController extends Controller
         if($pagos){
             $canpay =  $pagos->diferencia !== 0;
         }
-       
+
 
         $this->blog = $blog;
         return view('pasarela.index', compact('blog','canpay','pagos'));
@@ -99,7 +91,6 @@ class PasarelaController extends Controller
         $studentData = $user->persona;
         $pagos = Pago::where('eventoPago', $request->blog_id)->where('estudiante_id',  $studentData->estudiante->id)->latest()
         ->first();
-        // Obtén los datos del estudiante y los datos de pago guardados en el blog
         $studentData = $user->persona;
         $paymentData = Blog::find($request->blog_id);
         $status = 'Pagado';
@@ -114,22 +105,17 @@ class PasarelaController extends Controller
         $pago->diferencia = $diferencia;
         $pago->estado = $status;
         $pago->estudiante_id = $studentData->estudiante->id;
-        $pago->eventoPago = $request->blog_id; // Asigna el valor al campo eventoPago
+        $pago->eventoPago = $request->blog_id;
         $pago->usuarioid = auth()->user()->id;
         $pago->save();
 
         $pagos2 = Pago::where('eventoPago', $request->blog_id)->where('estudiante_id',  $studentData->estudiante->id)->latest()
         ->first();
-
-        // Combina los datos del estudiante y los datos de pago en un solo array
         $data = [
             'student' => $studentData,
             'payment' =>  $pagos2,
             'status' => $pagos2->estado
         ];
-
-
-        // Devuelve los datos como respuesta JSON
         return response()->json($data);
     }
 
@@ -138,7 +124,6 @@ class PasarelaController extends Controller
     public function getInvoice(Request $request)
     {
         $user = auth()->user();
-        // Obtén los datos del estudiante y los datos de pago guardados en el blog
         $studentData = $user->persona;
         $blog = Blog::find($request->blog_id);
         $detalles = $blog->detalles;
@@ -148,16 +133,12 @@ class PasarelaController extends Controller
         if ($cuotaPaymentData != $cuotaRequest) {
             $status = 'Abonado';
         }
-       
-        // Combina los datos del estudiante y los datos de pago en un solo array
         $data = [
             'student' => $studentData,
             'blog' => $blog,
             'detalles' => $detalles,
             'status' => $status
         ];
-
-        // Devuelve los datos como respuesta JSON
         return response()->json($data);
     }
 

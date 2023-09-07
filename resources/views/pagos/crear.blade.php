@@ -40,24 +40,8 @@
                                         <tr>
                                         <p>Datos del evento:</p>
 
-                                        <td>
-                                            <div class="col-xs-12 col-sm-12 col-md-12">
-                                            <label  for="estado">Estado:</label>
-                                            <div class="form-group">
-                                                <input type="text" class="form-control" name="estado" id="estado"  readonly>
-                                            </div>
-                                            </div>
-                                        </td>
-                                        <td>
-                                            <div class="col-xs-12 col-sm-12 col-md-12">
-                                                <div class="form-group">
-                                                    <label for="diferencia">Valor pendiente:</label>
-                                                    <input type="text" class="form-control" name="diferencia" id="diferencia" readonly>
-                                                    <div id="estado-info-msg"></div>
-                                                </div>
-                                            </div>
-                                        </td>
-                                    </tr>
+
+                                        </tr>
 
 
                                         <td>
@@ -138,7 +122,7 @@
                                                 <div class="col-xs-12 col-sm-12 col-md-12">
                                                     <div class="form-group">
                                                         <label for="cedula">Cédula estudiante</label>
-                                                        <input type="text" id="cedula" class="form-control" data-bs-toggle="tooltip" data-bs-placement="top" title="ingresar cedula" name="cedula" placeholder="Ingrese la cédula">
+                                                        <input type="text" id="cedula" class="form-control" data-bs-toggle="tooltip" data-bs-placement="top" title="Ingresar cédula" name="cedula" placeholder="Ingrese la cédula" maxlength="10">
                                                     </div>
 
                                             </td>
@@ -162,7 +146,23 @@
                                             </td>
 
 
-                                        </tr>
+                                            <td>
+                                                <div class="col-xs-12 col-sm-12 col-md-12">
+                                                <label  for="estado">Estado:</label>
+                                                <div class="form-group">
+                                                    <input type="text" class="form-control" name="estado" id="estado"  readonly>
+                                                </div>
+                                                </div>
+                                            </td>
+                                            <td>
+                                                <div class="col-xs-12 col-sm-12 col-md-12">
+                                                    <div class="form-group">
+                                                        <label for="diferencia">Valor pendiente:</label>
+                                                        <input type="text" class="form-control" name="diferencia" id="diferencia" readonly>
+                                                        <div id="estado-info-msg"></div>
+                                                    </div>
+                                                </div>
+                                            </td>
                                     </table>
 
                                     <center><button type="button" class="btn btn-primary" id="btnVerificarEstado">Verificar estado</button></center>
@@ -175,12 +175,14 @@
                                                     <label for="abono">Abono:</label>
                                                     <input type="number" name="abono" class="form-control" step="0.01" inputmode="decimal" id="abono" value="1.00">
                                                 </div>
-                                                <div id="mensaje-pago-completo" style="display: none;">
-                                                    El pago se encuentra completo
-                                                </div>
-
                                             </div>
                                         </td>
+                                        <div id="mensaje-pago-completo" style="display: none; color: red;">
+                                            El pago se encuentra completo
+                                        </div>
+
+
+
                                         <script>
                                             $(document).ready(function() {
                                                 $('#abono').on('blur', function() {
@@ -210,79 +212,6 @@
             </div>
         </div>
     </div>
-    <div class="section-body">
-        <div class="row">
-            <div class="col-lg-12">
-                <div class="card">
-                    <div class="card-body">
-
-                        {{-- Tabla --}}
-                        @if ($pagos->where('abono', '<>', 0)->count() > 0)
-                        <table class="table table-striped mt-2">
-                            <thead style="background-color: #6777ef">
-                                <th style="color: #fff">Fecha</th>
-                                <th style="color: #fff">Cédula</th>
-                                <th style="color: #fff">Estudiante</th>
-                                <th style="color: #fff">Evento</th>
-                                <th style="color: #fff">Pagado</th>
-                                <th style="color: #fff">Por pagar</th>
-                                <th style="color: #fff">Total</th>
-                                <th style="color: #fff">Recibo</th>
-                                <th style="color: #fff">Acciones</th>
-                            </thead>
-                            <tbody>
-                                @foreach ($pagos->where('abono', '<>', 0) as $pago)
-                                <tr>
-                                        @if ($pago->abono !== 0)
-                                        <td>{{$pago->created_at}}</td>
-                                        <td>{{ $pago->estudiante->persona->cedula }}</td>
-                                        <td>{{ $pago->estudiante->persona->nombre }}</td>
-                                        <td>{{$pago->blog->titulo}}</td>
-                                        <td>${{$pago->abono}}</td>
-                                        <td>${{ number_format($pago->diferencia, 2) }}</td>
-                                        <td>${{$pago->blog->cuota}}</td>
-                                        <td>
-                                            {{-- BOTON DE RECIBO --}}
-                                            <a class="btn btn-success btn-sm"  title="descargar recibo" href="{{ route('generar-recibo', ['pago' => $pago->id]) }}">
-                                                <i class="fas fa-file"></i>
-                                            </a>
-                                        </td>
-                                        <td>
-                                            <div class="btn-group" role="group" aria-label="Acciones">
-                                                @can('editar-pagos')
-                                                <a class="btn btn-info btn-sm" href="{{ route('pagos.edit', $pago->id)}}" title="Editar Pago">
-                                                    <i class="fas fa-edit"></i>
-                                                </a>
-                                                @endcan
-                                                @can('borrar-pagos')
-                                                {!! Form::open(['method'=>'DELETE', 'route'=>['pagos.destroy', $pago->id], 'style'=>'display:inline']) !!}
-                                                {!! Form::button('<i class="fas fa-trash"></i> ', ['type' => 'submit', 'class' => 'btn btn-danger btn-sm', 'title' => 'Eliminar Pago']) !!}
-                                                {!! Form::close() !!}
-                                                @endcan
-                                            </div>
-                                        </td>
-                                        @endif
-                                    </tr>
-                                @endforeach
-                            </tbody>
-                        </table>
-                        @else
-                            <div class="text-center">
-                                <i class="fas fa-exclamation-triangle fa-5x mb-3 text-muted"></i>
-                                <p class="text-muted">No existen registros de pagos realizados por el estudiante seleccionado.</p>
-                            </div>
-                            @endif
-
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-
-
-
-
-
 
 
 
@@ -528,6 +457,45 @@ function verificarEstado(cedula, eventoSeleccionado) {
 
               </script>
 
+             {{--  Para validar valor de abono --}}
+        <script>
+
+        function validarAbono() {
+            var abono = parseFloat($('#abono').val());
+            var diferencia = parseFloat($('#diferencia').val());
+
+            if (!isNaN(abono) && !isNaN(diferencia) && abono > diferencia) {
+                $('#mensaje-pago-completo').text('El valor ingresado supera el valor pendiente por pagar, ingrese una cantidad menor').show();
+                $('#btnRegistrarPago').prop('disabled', true);
+            } else {
+                $('#mensaje-pago-completo').hide();
+                $('#btnRegistrarPago').prop('disabled', false);
+            }
+        }
+
+        // Llamada a la función cuando se cambie el valor del campo 'abono'
+        $(document).ready(function() {
+            $('#abono').on('blur', function() {
+                var value = parseFloat($(this).val());
+                if (!isNaN(value)) {
+                    $(this).val(value.toFixed(2));
+                    validarAbono(); // Llamar a la función de validación
+                }
+            });
+        });
+
+        // Llamada a la función cuando se haga clic en el botón de verificar estado
+        $('#btnVerificarEstado').click(function() {
+            var cedula = $('#cedula').val();
+            var eventoSeleccionado = $('#evento').val();
+
+            if (cedula && eventoSeleccionado) {
+                verificarEstado(cedula, eventoSeleccionado);
+                validarAbono(); // Llamar a la función de validación
+            }
+        });
+
+        </script>
 
 
             <style>

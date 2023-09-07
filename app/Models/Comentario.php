@@ -16,7 +16,7 @@ class Comentario extends Model
         'biografias_id',
     ];
 
-    // Relación con el modelo Biografia
+   
     public function biografias()
     {
         return $this->belongsTo(Biografias::class, 'biografias_id');

@@ -14,7 +14,7 @@ class Auditoria extends Model
         return $this->attributes['fecha-hora'];
     }
 
-    // Define la asignación del atributo virtual
+
     public function setFechaHoraAttribute($value)
     {
         $this->attributes['fecha-hora'] = $value;

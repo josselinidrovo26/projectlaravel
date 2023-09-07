@@ -68,10 +68,7 @@ class BiografiaController extends Controller
 public function like(Request $request, Biografias $biografia)
 {
     if (Auth::check()) {
-        // Increment the 'likes' count in the database
         $biografia->increment('likes');
-
-        // Return the updated 'likes' count in the response
         return response()->json(['success' => true, 'likes' => $biografia->likes]);
     }
 
@@ -104,8 +101,6 @@ public function update(Request $request, Biografias $biografia)
     $biografia->tituloBiografia = $request->tituloBiografia;
     $biografia->contenidoBiografia = $request->contenidoBiografia;
     $biografia->usuarioid = auth()->user()->id;
-    // Omit the 'likes' field to prevent overwriting the existing value
-    // $biografia->likes = $currentLikes;
     $biografia->save();
 
     return redirect()->route('biografias.index');

@@ -14,7 +14,7 @@ class Estudiante extends Model
     use HasFactory;
 
     protected $table = 'estudiante';
-    protected $fillable = ['curso', 'persona_id', 'periodo',];
+    protected $fillable = ['curso', 'persona_id', 'periodo', 'usuarioid'];
 
     public function persona()
     {

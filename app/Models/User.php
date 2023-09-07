@@ -25,7 +25,10 @@ class User extends Authenticatable
     protected $fillable = [
         'email',
         'password',
+        'failed_attempts',
+        'last_failed_attempt',
     ];
+
 
     /**
      * The attributes that should be hidden for serialization.
@@ -51,7 +54,7 @@ class User extends Authenticatable
     {
         return $this->hasOne(Persona::class, 'usuario_id');
     }
-   
+
 
 
 

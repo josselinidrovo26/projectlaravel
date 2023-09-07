@@ -6,14 +6,13 @@
         <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
         <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.13/css/select2.min.css">
         <script src="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.13/js/select2.min.js"></script>
-       {{--  Descargar reportes --}}
        <script src="https://cdnjs.cloudflare.com/ajax/libs/FileSaver.js/2.0.5/FileSaver.min.js"></script>
   {{--      <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.10.2/jspdf.umd.min.js"></script> --}}
 <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.17.4/xlsx.full.min.js"></script>
 
 {{-- <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.10.2/jspdf.umd.min.js"></script> --}}
 <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
-
+<script src="https://printjs-4de6.kxcdn.com/print.min.js"></script>
 
 {{-- <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.19/jspdf.plugin.autotable.min.js"></script> --}}
 
@@ -96,51 +95,42 @@
 
                                         <script>
                                               $(document).ready(function() {
-                                                // Evento para el botón "Filtrar"
                                                 $('#filtrarButton').click(function() {
                                                     var selectedEvento = $('#evento').val();
 
-                                                    // Realiza la llamada AJAX para obtener los pagos filtrados
                                                     $.ajax({
                                                         url: '{{ route("reportes.filtrar") }}',
                                                         type: 'POST',
                                                         dataType: 'json',
                                                         data: { evento: selectedEvento },
                                                         success: function(response) {
-                                                            // Actualiza la tabla con los pagos filtrados
                                                             actualizarTabla(response);
-
-                                                            // Muestra la tabla después de filtrar
                                                             $('#detallesTable').show();
-
-                                                            // Obtiene y actualiza la cuota del evento seleccionado
                                                             var selectedEventoTitle = $('#evento option:selected').text();
-                                                            obtenerCuotaEvento(selectedEventoTitle);
-                                                            // Calcular el "Total a recolectar" basado en los estudiantes únicos y el valor de la cuota del evento seleccionado
+                                                         obtenerCuotaEvento(selectedEventoTitle);
                                                             calcularTotalRecolectar();
+                                                            calcularTotalPagado();
                                                         }
                                                     });
                                                 });
 
                                                 // Evento para el botón de búsqueda
-            $('#buscarButton').click(function() {
-                var searchQuery = $('#elemento').val();
+                                                    $(document).ready(function() {
 
-                // Realiza la llamada AJAX para buscar los registros
-                $.ajax({
-                    url: '{{ route("reportes.buscar") }}',
-                    type: 'POST',
-                    dataType: 'json',
-                    data: { query: searchQuery },
-                    success: function(response) {
-                        // Actualiza la tabla con los registros encontrados
-                        actualizarTabla(response);
+                                                        $('#buscarButton').click(function() {
+                                                            var searchTerm = $('#elemento').val().toLowerCase();
 
-                        // Muestra la tabla después de la búsqueda
-                        $('#detallesTable').show();
-                    }
-                });
-            });
+                                                            $('#detallesTable tbody tr').each(function() {
+                                                                var rowText = $(this).text().toLowerCase();
+                                                                if (rowText.includes(searchTerm)) {
+                                                                    $(this).show();
+                                                                } else {
+                                                                    $(this).hide();
+                                                                }
+                                                            });
+                                                        });
+                                                    });
+
 
                                                 function actualizarTabla(pagos) {
                                                     var tableBody = $('#detallesTable tbody');
@@ -148,6 +138,10 @@
 
 
                                                     pagos.forEach(function(pago) {
+                                                        var fechaHoraISO = pago.created_at;
+                                                        var fechaHora = new Date(fechaHoraISO);
+                                                        var fechaLegible = fechaHora.toLocaleString();
+
                                                         var row = '<tr>' +
                                                             '<td>' + pago.estudiante_id + '</td>' +
                                                             '<td>' + pago.estudiante.persona.cedula + '</td>' +
@@ -156,6 +150,7 @@
                                                             '<td>$' + pago.diferencia + '</td>' +
                                                             '<td>' + pago.estado + '</td>' +
                                                             '<td>' + pago.blog.cuota + '</td>' +
+                                                            '<td>'  + fechaLegible + '</td>' +
                                                             '</form></td>' +
                                                             '</tr>';
 
@@ -164,21 +159,19 @@
                                                 }
 
                                                 function obtenerCuotaEvento(titulo) {
-                                                    // Hacer una llamada AJAX para obtener la cuota del evento seleccionado
                                                     $.ajax({
                                                         url: '{{ route("reportes.obtenerCuotaEvento") }}',
                                                         type: 'POST',
                                                         dataType: 'json',
                                                         data: { titulo: titulo },
                                                         success: function(response) {
-                                                            // Una vez que se obtenga la respuesta, calcular el "Total a recolectar" con la cuota obtenida
                                                             var cuotaEvento = parseFloat(response.cuota);
                                                             calcularTotalRecolectar(cuotaEvento);
+
                                                         }
                                                     });
                                                 }
 
-                                                // Función para calcular el "Total a recolectar" basado en los estudiantes únicos y el valor de la cuota del evento seleccionado
                                                 function calcularTotalRecolectar() {
                                                     var estudiantesUnicos = {};
                                                     var totalRecolectar = 0;
@@ -191,17 +184,31 @@
                                                         }
                                                     });
 
-                                                    // Actualizar el elemento en la página con el resultado
                                                     $('#totalRecolectar').text('$' + totalRecolectar.toFixed(2));
                                                 }
+
+                                                function calcularTotalPagado() {
+                                                    var totalAbono = 0;
+
+                                                    $('#detallesTable tbody tr').each(function() {
+                                                        var abonoText = $(this).find('td:nth-child(4)').text();
+                                                        console.log('Valor de abonoText:', abonoText);
+                                                        var abono = parseFloat(abonoText.replace('$', '').trim());
+                                                        console.log('Valor de abono:', abono);
+                                                        totalAbono += abono;
+                                                    });
+
+                                                    console.log('Total de abonos:', totalAbono);
+                                                    $('#totalPagado').text('$' + totalAbono.toFixed(2));
+                                                }
+
                                             });
 
 
                                         </script>
 
 
-                                        <!-- Script para obtener la cuota del evento seleccionado -->
-                                        <script>
+                                       <script>
                                              $(document).ready(function() {
                                             $('#evento').change(function() {
                                                 var selectedEventoTitle = $(this).find(':selected').text();
@@ -225,9 +232,6 @@
                                             });
                                         </script>
 
-
-
-
                                     </div>
 
 
@@ -245,7 +249,7 @@
                                                         @enderror
                                                         <div class="input-group-append">
                                                             <button type="button" class="btn btn-primary" id="buscarButton">
-                                                                <i class="fas fa-search"></i> <!-- Icono de lupa de Font Awesome -->
+                                                                <i class="fas fa-search"></i>
                                                             </button>
                                                         </div>
                                                     </div>
@@ -262,9 +266,9 @@
                                                             <label for="estado">Buscar por estado:</label>
                                                             <select class="class-cuota form-control" name="estado" id="estado">
                                                                 <option value="">Selecciona un estado</option>
-                                                                <option value="Pendiente">Pendiente</option>
-                                                                <option value="Pagado">Pagado</option>
-                                                                <option value="No pagado">No pagado</option>
+                                                                <option value="PENDIENTE">PENDIENTE</option>
+                                                                <option value="PAGADO">PAGADO</option>
+                                                                <option value="NO PAGADO">NO PAGADO</option>
                                                             </select>
                                                         </div>
                                                     </div>
@@ -369,25 +373,29 @@
 
                                 <div id="sumContainer">
                                     <p>Total a recolectar: <span id="totalRecolectar">$0.00</span></p>
-                                    <p>Total pagado:</p>
+                                    <p>Total pagado: <span id="totalPagado">$0.00</span></p>
                                     <ul id="sumList"></ul>
                                 </div>
 
 
-
-
-
                                 <table class="table table-striped" id="detallesTable">
+                                    @if ($pagos->isEmpty())
+                                    <div class="text-center">
+                                      <i class="fas fa-exclamation-triangle fa-2x mb-3 text-muted"></i>
+                                      <p class="text-muted">No existen registros de pagos en este momento.</p>
+                                  </div>
+                                      @else
+
                                     <thead style="background-color: #6777ef">
                                         <tr>
-                                         <th style="color: #fff">ID</th>
-                                          <th style="color: #fff">Cédula</th>
-                                            <th style="color: #fff">Estudiante</th>
-                                            <th style="color: #fff">Abono</th>
-                                            <th style="color: #fff">Diferencia</th>
-                                            <th style="color: #fff">Estado</th>
-                                            <th style="color: #fff">Total</th>
-
+                                         <th style="color: #fff; font-weight: bold;">ID</th>
+                                          <th style="color: #fff; font-weight: bold;">Cédula</th>
+                                            <th style="color: #fff; font-weight: bold;">Estudiante</th>
+                                            <th style="color:#fff; font-weight: bold;">Abono</th>
+                                            <th style="color: #fff; font-weight: bold;">Diferencia</th>
+                                            <th style="color: #fff; font-weight: bold;">Estado</th>
+                                            <th style="color: #fff; font-weight: bold;">Total</th>
+                                            <th style="color: #fff; font-weight: bold;">Fecha pago</th>
                                         </tr>
                                     </thead>
                                     <tbody>
@@ -396,6 +404,7 @@
                                     </tbody>
 
                                 </table>
+                                @endif
                             </div>
                         </div>
                     </div>
@@ -412,60 +421,68 @@
 
 
     function imprimirTabla() {
-    var tablaContenido = document.getElementById('contenidotabla');
-    var eventoSeleccionado = document.getElementById('eventoSeleccionado').innerText;
-    var logoUrl = '{{ asset("img/logo.png") }}'; // Ruta de la imagen utilizando el helper asset de Laravel
+        var tablaContenido = document.getElementById('contenidotabla');
 
-    var win = window.open('', '', 'width=800, height=600');
+        var userName = "{{ \Illuminate\Support\Facades\Auth::user()->persona->nombre }}";
 
-    // Agrega la imagen al inicio del contenido
-    var contenidoHTML = `
-        <html>
-        <head>
-            <title>Reporte</title>
-            <style>
-                table {
-                    border-collapse: collapse;
-                    width: 100%;
-                    border: 1px solid black; /* Agregar borde a la tabla */
-                }
-                th, td {
-                    border: 1px solid black; /* Agregar borde a las celdas */
-                    padding: 8px;
-                    text-align: left;
-                }
-            </style>
-        </head>
-        <body>
-            <img src="${logoUrl}" alt="Logo" style="width: 100px; height: auto;">
-            <h3>Evento: ${eventoSeleccionado}</h3>
-            ${tablaContenido.outerHTML}
-        </body>
-        </html>`;
+            var contenidoHTML = `
+                <html>
+                <head>
+                    <title>Unidad Educativa Blanca García-Reporte de pagos</title>
+                    <style>
+                        table {
+                            border-collapse: collapse;
+                            width: 100%;
+                            border: 1px solid black;
+                        }
+                        th, td {
+                            border: 1px solid black;
+                            padding: 8px;
+                            text-align: left;
+                        }
+                        .header {
+                            display: flex;
+                            justify-content: space-between;
+                            align-items: flex-start;
+                            margin-bottom: 20px;
+                        }
+                        .logo {
+                            width: 100px;
+                            height: auto;
+                        }
 
-    win.document.write(contenidoHTML);
-    win.document.close();
-    win.print();
-    win.close();
+                    </style>
+                </head>
+                <body>
+                    <div class="header">
+                        <p>Usuario: ${userName}</p>
+                        <h1>Unidad Educativa Blanca García</h1>
+                        <img src="{{ asset('img/logo.png') }}" alt="Logo" class="logo">
+                    </div>
+
+                    ${tablaContenido.outerHTML}
 
 
+                </body>
+                </html>`;
 
 
+            printJS({ printable: contenidoHTML, type: 'raw-html'});
 
-
-    // Crea el PDF con el contenido de la tabla
-   /*  var options = { filename: 'Unidad Educativa Blanca García-reporte de pagos-' + eventoSeleccionado + '.pdf' };
-    html2pdf().from(tablaContenido).set(options).save(); */
-}
+            }
 
 
     function descargarExcel() {
-        var tablaContenido = document.getElementById('contenidotabla');
-        var wb = XLSX.utils.table_to_book(tablaContenido);
-        XLSX.writeFile(wb, 'Unidad Educativa Blanca García-reporte de pagos.xlsx');
+        var tablaClonada = $('#contenidotabla').clone();
+            var tablaNueva = $('<table></table>');
+            tablaNueva.append('<tr><td>Total a recolectar:</td><td>' + $('#totalRecolectar').text() + '</td></tr>');
+            tablaNueva.append('<tr><td>Total pagado:</td><td>' + $('#totalPagado').text() + '</td></tr>');
+            tablaNueva.append(tablaClonada);
+            tablaNueva.find('th').css('font-weight', 'bold');
+            var wb = XLSX.utils.table_to_book(tablaNueva[0]);
+            XLSX.writeFile(wb, 'Unidad Educativa Blanca García-reporte de pagos.xlsx');
     }
 
-    // Evento para el botón de descarga de Excel (si se desea mantener)
     document.getElementById('descargarExcelButton').addEventListener('click', function() {
         descargarExcel();
     });
@@ -483,19 +500,18 @@
             display: none;
         }
 
-       /* Estilo para el estado "Pendiente" */
     .estado-pendiente {
         background-color: blue;
         color: white;
     }
 
-    /* Estilo para el estado "Pagado" */
+
     .estado-pagado {
         background-color: green;
         color: white;
     }
 
-    /* Estilo para el estado "No Pagado" */
+
     .estado-no-pagado {
         background-color: red;
         color: white;
@@ -519,7 +535,7 @@
             }
 
             .btn-container button:nth-child(1) {
-                background-color: #dc3545; /* Rojo */
+                background-color: #dc3545;
             }
 
             .btn-container button:nth-child(1):hover {
@@ -527,7 +543,7 @@
             }
 
             .btn-container button:nth-child(2) {
-                background-color: #28a745; /* Verde */
+                background-color: #28a745;
             }
 
             .btn-container button:nth-child(2):hover {
@@ -571,6 +587,11 @@
 
             .filter-container button:hover {
                 background-color: #0056b3;
+            }
+
+
+            .bold-title {
+                font-weight: bold;
             }
 
     </style>

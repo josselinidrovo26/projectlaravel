@@ -42,20 +42,27 @@
                                     {!! Form::text('email', $estudiante->persona->user->email ?? null, ['class' => 'form-control']) !!}
                                 </div>
                             </div>
+
                             <div class="col-xs-12 col-sm-12 col-md-12">
-                                <div class="toggle-password">
-                                    {!! Form::password('password', ['class' => 'form-control password-input']) !!}
-                                    <span class="eye-icon">
-                                        <i class="far fa-eye"></i>
-                                    </span>
+                                <div class="form-group">
+                                    <label for="password">Contraseña *</label>
+                                        <div class="toggle-password">
+                                            {!! Form::password('password', ['class' => 'form-control password-input']) !!}
+                                            <span class="eye-icon">
+                                                <i class="far fa-eye"></i>
+                                            </span>
+                                        </div>
                                 </div>
                             </div>
                             <div class="col-xs-12 col-sm-12 col-md-12">
-                                <div class="toggle-password">
-                                    {!! Form::password('confirm-password', ['class' => 'form-control password-input']) !!}
-                                    <span class="eye-icon">
-                                        <i class="far fa-eye"></i>
-                                    </span>
+                                <div class="form-group">
+                                    <label for="confirm_password">Confirmar contraseña *</label>
+                                        <div class="toggle-password">
+                                            {!! Form::password('confirm_password', ['class' => 'form-control password-input']) !!}
+                                            <span class="eye-icon">
+                                                <i class="far fa-eye"></i>
+                                            </span>
+                                        </div>
                                 </div>
                             </div>
                             <div class="col-xs-12 col-sm-12 col-md-12">
@@ -73,7 +80,7 @@
 
                             <div class="col-xs-12 col-sm-12 col-md-12">
                                 <div class="form-group">
-                                    <label for="rol">Rol</label>
+                                    <label for="rol">Rol *</label>
                                     {!! Form::select('persona[rol]', $roles, $user->persona->rol ?? null, ['class' => 'form-control']) !!}
                                 </div>
                             </div>
@@ -89,12 +96,10 @@
             </div>
         </div>
     </div>
-</section>
-@endsection
 
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
-{{--   <script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/js/all.min.js"></script> --}}
-  <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+{{--  <script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/js/all.min.js"></script>  --}}
+{{--   <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script> --}}
 
 <script>
   $(document).ready(function () {
@@ -107,6 +112,9 @@
   });
 </script>
 
+
+</section>
+@endsection
 <style>
   .toggle-password {
       cursor: pointer;

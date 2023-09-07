@@ -50,7 +50,9 @@
                                             {!! Form::password('password', ['class' => 'form-control password-input']) !!}
                                             <span class="eye-icon">
                                                 <i class="far fa-eye"></i>
+                                                <i class="far fa-eye-slash" style="display: none;"></i>
                                             </span>
+
                                         </div>
                                 </div>
                             </div>
@@ -61,6 +63,7 @@
                                             {!! Form::password('confirm-password', ['class' => 'form-control password-input']) !!}
                                             <span class="eye-icon">
                                                 <i class="far fa-eye"></i>
+                                                <i class="far fa-eye-slash" style="display: none;"></i>
                                             </span>
                                         </div>
                                 </div>
@@ -83,7 +86,7 @@
     </div>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
   {{--   <script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/js/all.min.js"></script> --}}
-    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+   {{--  <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script> --}}
 
 <script>
     $(document).ready(function () {

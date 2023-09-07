@@ -51,7 +51,7 @@ class RolController extends Controller
     public function store(Request $request)
     {
         $this->validate($request, [
-            /* 'name' => 'required|unique:roles,name',  *///revisar
+            /* 'name' => 'required|unique:roles,name',  */
             'name' => 'required',
             'permission' => 'required',
         ]);

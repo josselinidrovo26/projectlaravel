@@ -15,6 +15,7 @@ use App\Http\Controllers\ReportesController;
 use App\Http\Controllers\ConfiguracionController;
 use App\Http\Controllers\ChatController;
 use App\Http\Controllers\ContactoController;
+use App\Http\Controllers\CalendarioController;
 use App\Http\Controllers\CalendaryController;
 use App\Http\Controllers\AuditoriaController;
 use App\Http\Controllers\DetallesController;
@@ -67,6 +68,7 @@ Route::group(['middleware' => ['auth']], function(){
     Route::resource('estudiante', EstudianteController::class);
     Route::resource('pagos', PagoController::class);
     Route::resource('pasarelas', PasarelaController::class);
+    Route::resource('calendario', CalendarioController::class);
     Route::get('/payment', [PaymentController::class, 'showPaymentPage']);
 
     Route::post('/pasarelas/getDataStudent', [PasarelaController::class, 'getDataStudent'])->name('pasarelas.getDataStudent');
@@ -121,7 +123,7 @@ Route::get('/pasarela/{blog}', 'PasarelaController@show')->name('pasarela.show')
 
 Route::post('/consultar_estudiante', 'PagoController@consultarEstudiante');
 
-Route::post('/guardar-fecha', [PersonaController::class, 'guardarFecha'])->name('guardarFecha');
+Route::post('/guardar-fecha', [ConfiguracionController::class, 'guardarFecha'])->name('guardarFecha');
 
 
 Route::post('biografias/like/{biografia}', [BiografiaController::class, 'like'])->name('biografias.like');
@@ -140,3 +142,10 @@ Route::post('/store', [BlogController::class, 'store'])->name('store');
 
 Route::post('/obtenerUltimaDiferencia', 'PagoController@obtenerUltimaDiferencia')->name('obtenerUltimaDiferencia');
 
+
+Route::post('/cambiar-contrasena', [UsuarioController::class, 'cambiarContrasena'])->name('cambiar-contrasena');
+
+/* Route::get('/cursos', 'CursoController@index')->name('cursos.index'); */
+Route::put('/cursos/{curso}', [CursoController::class, 'update'])->name('cursos.update');
+Route::get('/cursos', 'CursoController@index')->name('cursos.index');
+Route::get('/cursos', [CursoController::class, 'index'])->name('cursos.index');

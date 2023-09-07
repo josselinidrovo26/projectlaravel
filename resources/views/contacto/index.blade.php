@@ -6,7 +6,6 @@
     <meta charset="UTF-8">
     <title>Formulario de Contacto</title>
     <link rel="stylesheet" href="estilos.css">
-    <!--Icon-Font-->
     <script src="https://kit.fontawesome.com/eb496ab1a0.js" crossorigin="anonymous"></script>
 </head>
 <body>

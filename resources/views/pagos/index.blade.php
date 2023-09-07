@@ -63,11 +63,7 @@
                                             </td>
                                             <td>
                                                 <div class="btn-group" role="group" aria-label="Acciones">
-                                                    @can('editar-pagos')
-                                                    <a class="btn btn-info btn-sm" href="{{ route('pagos.edit', $pago->id)}}" title="Editar Pago">
-                                                        <i class="fas fa-edit"></i>
-                                                    </a>
-                                                    @endcan
+                                                    
                                                     @can('borrar-pagos')
                                                     {!! Form::open(['method'=>'DELETE', 'route'=>['pagos.destroy', $pago->id], 'style'=>'display:inline']) !!}
                                                     {!! Form::button('<i class="fas fa-trash"></i> ', ['type' => 'submit', 'class' => 'btn btn-danger btn-sm', 'title' => 'Eliminar Pago']) !!}
@@ -83,7 +79,7 @@
                             @else
                                 <div class="text-center">
                                     <i class="fas fa-exclamation-triangle fa-2x mb-3 text-muted"></i>
-                                    <p class="text-muted">No existen registros de pagos realizados.</p>
+                                    <p class="text-muted">No existen registros de pagos.</p>
                                 </div>
                                 @endif
                             <div class="pagination justify-content-end">

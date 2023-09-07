@@ -15,7 +15,9 @@ class CreatePagosTable extends Migration
     {
         Schema::create('pagos', function (Blueprint $table) {
             $table->id();
+            $table->decimal('pagoHistorico', 8, 2);
             $table->decimal('abono', 8, 2);
+            $table->decimal('suma', 8, 2);
             $table->decimal('diferencia', 8, 2);
             $table->string('estado');
             $table->unsignedBigInteger('estudiante_id')->default(0);

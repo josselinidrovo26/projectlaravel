@@ -9,7 +9,7 @@ use Illuminate\Support\Str;
 class Banco extends Model
 {
     use HasFactory;
-    protected $fillable = ['nombre_banco', 'Tipocuenta', 'numcuenta', 'nameUser', 'cedula'];
+    protected $fillable = ['nombre_banco', 'Tipocuenta', 'numcuenta', 'nameUser', 'cedula', 'Telefono'];
 
     protected static function boot()
     {

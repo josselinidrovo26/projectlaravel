@@ -63,7 +63,6 @@ class UsuarioController extends Controller
         $input = $request->all();
         $input['password'] = Hash::make($input['password']);
         $user = User::create($input);
-        // Asignar el rol a través de la relación con la persona y el estudiante
         if ($user->persona && $user->persona->estudiante) {
         $rol = $user->persona->estudiante->rol;
         $user->assignRole($rol);
@@ -90,7 +89,7 @@ class UsuarioController extends Controller
      */
     public function edit($id)
     {
-        $roles = Role::pluck('name', 'id'); // Obtener los roles de la base de datos
+        $roles = Role::pluck('name', 'name'); 
         $user = User::find($id);
         $personas = Persona::pluck('nombre', 'id')->all();
         return view('usuarios.editar', compact('user', 'personas', 'roles'));
@@ -108,13 +107,13 @@ class UsuarioController extends Controller
 {
     $request->validate([
         'email' => 'required|email',
-        'persona' => [
+       /*  'persona' => [
             'required',
             'array',
             Rule::exists('persona', 'id')->where(function ($query) use ($id) {
                 $query->where('usuario_id', $id);
             }),
-        ],
+        ], */
         'persona.cedula' => 'required',
         'persona.nombre' => 'required',
         'persona.rol' => 'required',
@@ -130,6 +129,7 @@ class UsuarioController extends Controller
     $persona->rol = $request->input('persona.rol');
     $persona->save();
 
+
     return redirect()->route('usuarios.index')->with('success', 'Usuario actualizado correctamente.');
 }
 
@@ -144,4 +144,28 @@ class UsuarioController extends Controller
         User::find($id)->delete();
         return redirect()->route('usuarios.index');
     }
+
+
+
+
+    public function cambiarContrasena(Request $request)
+{
+    $user = User::findOrFail($request->input('user_id'));
+
+    $request->validate([
+        'password_current' => 'required|password',
+        'password' => 'required|confirmed|min:8',
+    ]);
+
+    $user->update([
+        'password' => Hash::make($request->input('password')),
+    ]);
+
+    return redirect()->back()->with('success', 'Contraseña cambiada con éxito.');
+}
+
+
+
+
+
 }

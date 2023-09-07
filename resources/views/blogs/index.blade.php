@@ -28,7 +28,7 @@
                               @if ($blogs->isEmpty())
                               <div class="text-center">
                                 <i class="fas fa-exclamation-triangle fa-2x mb-3 text-muted"></i>
-                                <p class="text-muted">No existen registros de pagos realizados.</p>
+                                <p class="text-muted">No existen registros de eventos en este momento.</p>
                             </div>
                                 @else
                                     <table class="table table-striped mt-2">
@@ -63,8 +63,6 @@
                                                         <!-- Botón del modal de agregar -->
                                                         <button type="button" class="btn btn-success btn-sm" data-toggle="modal" data-target="#myModal{{ $blog->id }}" title="agregar detalle"><i class="fas fa-plus"></i></button>
 
-
-                                                        <!-- Modal -->
                                                         <div class="modal fade" id="myModal{{ $blog->id }}" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
 
                                                             <div class="modal-dialog" role="document">
@@ -88,11 +86,9 @@
                                                                             </button>
                                                                         </div>
                                                                         @endif
-                                                                        <!-- Contenido del formulario del modal -->
                                                                         <form action="{{ route('detalles.store') }}" method="POST">
                                                                             @csrf
                                                                             <input type="hidden" name="blog_id" value="{{ $blog->id }}">
-                                                                            <!-- Resto de los campos del formulario -->
                                                                             <div class="form-group">
                                                                                 <label for="actividad">Actividad</label>
                                                                                 <input type="text" name="actividad" class="form-control">
@@ -126,7 +122,7 @@
                                                         {{-- BOTON DEL MODAL PARA VER --}}
                                                         <a class="btn btn-primary btn-sm" data-toggle="modal" data-target="#Modal2{{ $blog->id }}" title="ver detalle"><i class="fas fa-eye"></i></a>
 
-                                                        <!-- Modal -->
+
                                                         <div class="modal fade" id="Modal2{{ $blog->id }}" tabindex="-1" role="dialog" aria-labelledby="Modal2Label">
                                                             <div class="modal-dialog modal-dialog-scrollable" role="document">
                                                                 <div class="modal-content">
@@ -181,8 +177,6 @@
                                                     <script>
                                                         function eliminarDetalle(event, detalleId, blogId) {
                                                             event.preventDefault();
-
-                                                            // Send an AJAX request to delete the detail from the database
                                                             $.ajax({
                                                                 url: `/detalles/${detalleId}`,
                                                                 type: 'DELETE',
@@ -190,18 +184,14 @@
                                                                     'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
                                                                 },
                                                                 success: function (data) {
-                                                                    // On success, remove the detail row from the table
                                                                     const detalleRow = document.querySelector(`#detalle-${detalleId}`);
                                                                     detalleRow.parentNode.removeChild(detalleRow);
 
-                                                                    // Update the total sum of prices in the modal
                                                                     const precioElement = detalleRow.querySelector('.precio');
                                                                     const precio = parseFloat(precioElement.textContent.replace('$', ''));
                                                                     const sumaPrecioElement = document.querySelector(`.suma-precio${blogId}`);
                                                                     const sumaPrecio = parseFloat(sumaPrecioElement.textContent.replace("Suma del campo 'precio': $", ''));
                                                                     sumaPrecioElement.textContent = `Suma del campo 'precio': $${sumaPrecio - precio}`;
-
-                                                                    // Reload the current page after successful deletion
                                                                     location.reload();
                                                                 },
                                                                 error: function (error) {
@@ -213,11 +203,7 @@
                                                     </script>
 
 
-
-
                                                     @if ($user->persona->estudiante && $user->persona->estudiante->curso)
-
-                                                       <!-- Botón de pagar -->
                                                         <a class="btn btn-warning btn-sm" href="{{ route('pasarelas.show', $blog->id) }}" title="pagar"><i class="fas fa-money-bill"></i></a>
                                                     @endif
 

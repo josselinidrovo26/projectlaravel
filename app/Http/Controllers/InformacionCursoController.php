@@ -12,7 +12,7 @@ class InformacionCursoController extends Controller
     public function mostrarInformacionCurso()
     {
         /* $curso = Auth::user()->curso;
-        $informacionCurso = $curso->informacionCurso; // Supongamos que tienes una relación 'informacionCurso' en el modelo Curso
+        $informacionCurso = $curso->informacionCurso; 
 
         return view('informacion_curso.index', compact('informacionCurso')); */
     }

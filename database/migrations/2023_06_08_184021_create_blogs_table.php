@@ -17,8 +17,8 @@ class CreateBlogsTable extends Migration
             $table->id();
             $table->string('titulo');
             $table->text('contenido');
-            $table->text('cuota');
-            $table->text('pago');
+            $table->decimal('cuota', 10, 2)->default(0.00)->nullable();
+            $table->date('pago');
             $table->text('cursoblog');
             $table->text('periodoblog');
             $table->timestamps();

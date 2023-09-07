@@ -20,6 +20,7 @@ class CreateBancosTable extends Migration
             $table->string('numcuenta');
             $table->string('nameUser');
             $table->string('cedula');
+            $table->string('Telefono');
             $table->timestamps();
         });
     }

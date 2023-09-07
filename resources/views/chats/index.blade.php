@@ -1,13 +1,12 @@
 @extends('layouts.app')
 @section('content')
 <section class="section">
-    <link rel="stylesheet" href="{{ asset('web/css/estilochat.css') }}">
+  {{--   <link rel="stylesheet" href="{{ asset('web/css/estilochat.css') }}"> --}}
 
 
 {{-- <link href="//maxcdn.bootstrapcdn.com/bootstrap/4.1.1/css/bootstrap.min.css" rel="stylesheet" id="bootstrap-css"> --}}
 {{-- <script src="//maxcdn.bootstrapcdn.com/bootstrap/4.1.1/js/bootstrap.min.js"></script> --}}
 {{-- <script src="//cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script> --}}
-<!------ Include the above in your HEAD tag ---------->
 
 {{--
 		<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css" integrity="sha384-MCw98/SFnGE8fJT3GXwEOngsV7Zt27NXFoaoApmYm81iuXoPkFOJwJ8ERdknLPMO" crossorigin="anonymous"> --}}
@@ -41,7 +40,7 @@
 							<span id="action_menu_btn"><i class="fas fa-ellipsis-v"></i></span>
 							<div class="action_menu">
 								<ul>
-									
+
 									<li><i class="fas fa-plus"></i> Agregar al grupo</li>
 									<li><i class="fas fa-ban"></i> Borrar chat</li>
 								</ul>

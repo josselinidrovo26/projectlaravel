@@ -1,7 +1,7 @@
 <?php
 
 namespace App\Http\Controllers;
-
+use Illuminate\Support\Facades\DB;
 use Illuminate\Http\Request;
 use App\Models\Auditoria;
 use Illuminate\Support\Facades\Auth;
@@ -16,9 +16,11 @@ class AuditoriaController extends Controller
      */
     public function index()
     {
-        $audits = Auditoria::all();
+        $perPage = 10;
+        $audits = Auditoria::paginate($perPage);
         return view('auditoria.index', ['audits' => $audits]);
     }
+
 
     /**
      * Show the form for creating a new resource.

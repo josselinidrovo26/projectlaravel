@@ -26,19 +26,29 @@
 
                             <h2 class="section-title">Filtrar por fechas</h2>
                             <div class="filter-form">
-
                                 <div class="form-group">
-                                    <label for="fecha_desde">Fecha Desde:</label>
+                                    <label for="fecha_desde">Fecha desde:</label>
                                     <input type="date" class="form-control" id="fecha_desde" name="fecha_desde" required>
                                 </div>
                                 <div class="form-group">
-                                    <label for="fecha_hasta">Fecha Hasta:</label>
+                                    <label for="fecha_hasta">Fecha hasta:</label>
                                     <input type="date" class="form-control" id="fecha_hasta" name="fecha_hasta" required>
                                 </div>
-                                    <button type="button" class="btn btn-primary btn-filter">Filtrar</button>
-                                    <button type="button" class="btn btn-info btn-show-all">Todos</button>
-
+                                <button type="button" class="btn btn-primary btn-filter" onclick="validarFechas()">Filtrar</button>
+                                <button type="button" class="btn btn-info btn-show-all">Todos</button>
                             </div>
+                            <script>
+                                function validarFechas() {
+                                    var fechaDesde = new Date(document.getElementById("fecha_desde").value);
+                                    var fechaHasta = new Date(document.getElementById("fecha_hasta").value);
+
+                                    if (fechaDesde > fechaHasta) {
+                                        alert("Las fechas ingresadas son incorrectas, ingrese nuevamente.");
+                                    } else {
+
+                                    }
+                                }
+                            </script>
 
 
 
@@ -51,11 +61,15 @@
                             </div>
 
 
-
-
                             <div class="container">
                                 <h2 class="section-title">Registro de Auditoría</h2>
-
+                                @if ($audits->isEmpty())
+                                <div class="no-records">
+                                    <span class="no-records-icon">&#9888;</span>
+                                    <p>No existen registros de auditoría para las fechas seleccionadas.</p>
+                                </div>
+                            @else
+                            <div class="table-responsive">
                                 <table class="audit-table">
                                     <thead>
                                         <tr>
@@ -69,6 +83,9 @@
                                         </tr>
                                     </thead>
                                     <tbody>
+
+
+
                                         @foreach ($audits as $audit)
                                         <tr>
                                             <td>{{ $audit->id }}</td>
@@ -77,16 +94,18 @@
                                             <td>{{ $audit->codigo }}</td>
                                             <td>{{ $audit->modulo }}</td>
                                             <td>{{ $audit->interfaz }}</td>
-                                            <td>{{ $audit->sentencia }}</td>
+                                            <td style="font-size: 0.7em;">{{ $audit->sentencia }}</td>
                                         </tr>
                                         @endforeach
+
                                     </tbody>
                                 </table>
-
+                                @endif
                             </div>
-                          {{--   <div class="pagination justify-content-end">
+                           <div class="pagination justify-content-end">
                                 {!! $audits->links() !!}
-                            </div> --}}
+                            </div>
+                        </div>
                         </div>
                     </div>
                 </div>
@@ -153,33 +172,62 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.17.4/xlsx.full.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.19/jspdf.plugin.autotable.min.js"></script>
+<script src="https://printjs-4de6.kxcdn.com/print.min.js"></script>
+
 <script>
-      // Función para imprimir la vista previa
       function printPreview() {
-            const container = document.querySelector('.container');
-            const clonedContainer = container.cloneNode(true);
+    const container = document.querySelector('.container');
+    const clonedContainer = container.cloneNode(true);
 
-            // Elimina los botones de descarga antes de imprimir
-            const buttons = clonedContainer.querySelectorAll('.btn-container');
-            buttons.forEach(button => button.remove());
+    const table = clonedContainer.querySelector('table');
+    table.style.borderCollapse = 'collapse';
+    table.style.border = '1px solid black';
+    table.style.width = '100%';
+    table.style.marginTop = '20px';
 
-            // Abre una nueva ventana de impresión
-            const printWindow = window.open('', '_blank');
-            printWindow.document.open();
-            printWindow.document.write(clonedContainer.outerHTML);
-            printWindow.document.close();
+    const headerCells = table.querySelectorAll('thead th');
+    headerCells.forEach(cell => {
+        cell.style.backgroundColor = '#6777ef';
+        cell.style.border = '1px solid black';
+        cell.style.padding = '8px';
+        cell.style.textAlign = 'center';
+        cell.style.color = 'white';
+    });
 
-            // Espera un momento antes de imprimir para que se renderice correctamente
-            setTimeout(function() {
-                printWindow.print();
-                printWindow.close();
-            }, 100);
-        }
+    const rows = table.querySelectorAll('tr');
+    rows.forEach(row => {
+        const cells = row.querySelectorAll('th, td');
+        cells.forEach(cell => {
+            cell.style.border = '1px solid black';
+            cell.style.padding = '8px';
+            cell.style.textAlign = 'left';
+        });
+    });
 
-        // Asigna el evento al botón de imprimir
-        document.getElementById('printButton').addEventListener('click', printPreview);
+    const title = clonedContainer.querySelector('h2');
+    title.style.textAlign = 'center';
+    const logoImg = document.createElement('img');
+    logoImg.src = '{{ asset("img/logo.png") }}';
+    logoImg.style.width = '100px';
+    logoImg.style.height = 'auto';
+    logoImg.style.margin = '20px';
+    logoImg.style.float = 'right';
+    clonedContainer.insertBefore(logoImg, clonedContainer.firstChild);
+
+    const buttons = clonedContainer.querySelectorAll('.btn-container');
+    buttons.forEach(button => button.remove());
+    printJS({ printable: clonedContainer.outerHTML, type: 'raw-html' });
+}
+document.getElementById('printButton').addEventListener('click', printPreview);
 
 
+
+
+
+
+
+
+/* DESCARGAR EXCEL */
         function downloadExcel() {
     const table = document.querySelector('.audit-table');
     const visibleRows = Array.from(table.querySelectorAll('tbody tr')).filter(row => row.style.display !== 'none'); // Filas visibles
@@ -203,8 +251,6 @@
         alert('No hay registros visibles para descargar.');
     }
 }
-
-// Asigna el evento al botón de descarga Excel
 document.getElementById('excelButton').addEventListener('click', downloadExcel);
 
 
@@ -271,12 +317,11 @@ document.getElementById('excelButton').addEventListener('click', downloadExcel);
 
     .filter-form {
         display: flex;
-        gap: 10px; /* Espacio entre los elementos */
-        align-items: center; /* Alineación vertical del contenido */
+        gap: 10px;
+        align-items: center;
     }
 
     .btn-filter {
-        /* Estilos adicionales para el botón Filtrar */
         background-color: #007bff;
         color: #fff;
         border: none;
@@ -285,7 +330,6 @@ document.getElementById('excelButton').addEventListener('click', downloadExcel);
     }
 
     @media print {
-        /* Agrega estilos específicos para la impresión */
         .btn-container {
             display: none;
         }
@@ -294,7 +338,9 @@ document.getElementById('excelButton').addEventListener('click', downloadExcel);
         display: flex;
         align-items: center;
         gap: 10px;
-        margin-bottom: 20px; /* Añade margen inferior para separar del contenido siguiente */
+        margin-bottom: 20px; 
     }
 
+
 </style>
+

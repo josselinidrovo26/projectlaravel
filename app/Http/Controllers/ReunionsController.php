@@ -56,14 +56,12 @@ class ReunionsController extends Controller
 
         $input = $request->all();
         $reunion = Reunion::create($input);
-
-        // Asignar el nombre del curso a la propiedad participantes
         $curso = Curso::find($request->input('curso'));
         if ($curso) {
             $reunion->participantes = $curso->name;
             $reunion->save();
         } else {
-            // Manejar el caso en que no se encuentra el curso
+
         }
 
         return redirect()->route('reunions.index');
@@ -118,7 +116,7 @@ class ReunionsController extends Controller
         if ($curso) {
             $reunion->participantes = $curso->name;
         } else {
-            // Manejar el caso en que no se encuentra el curso
+
         }
         $reunion->save();
         return redirect()->route('reunions.index');

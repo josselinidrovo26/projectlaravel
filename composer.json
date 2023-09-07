@@ -9,6 +9,7 @@
         "barryvdh/laravel-dompdf": "^2.0",
         "dompdf/dompdf": "^2.0",
         "fruitcake/laravel-cors": "^2.0",
+        "fullcalendar/fullcalendar": "^3.10",
         "guzzlehttp/guzzle": "^7.0.1",
         "infyomlabs/laravel-ui-stisla": "^3.1",
         "laravel/framework": "^8.75",
@@ -63,7 +64,12 @@
     "config": {
         "optimize-autoloader": true,
         "preferred-install": "dist",
-        "sort-packages": true
+        "sort-packages": true,
+        "allow-plugins": {
+            "composer/installers": true,
+            "robloach/component-installer": true,
+            "oomphinc/composer-installers-extender": true
+        }
     },
     "minimum-stability": "dev",
     "prefer-stable": true

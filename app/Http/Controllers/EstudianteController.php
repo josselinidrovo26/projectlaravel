@@ -43,6 +43,7 @@ class EstudianteController extends Controller
         return view('estudiante.index', compact('estudiantes'));
     }
 
+
     /**
      * Show the form for creating a new resource.
      *
@@ -68,7 +69,7 @@ class EstudianteController extends Controller
         'curso' => 'required',
         'periodo' => 'required',
         'email' => 'required|unique:users,email',
-        'password' => 'required|same:confirm-password',
+        'password' => 'required|same:confirm_password',
         'nombre' => 'required',
         'rol' => 'required',
         'cedula' => 'required|unique:persona,cedula',
@@ -88,7 +89,6 @@ class EstudianteController extends Controller
     $persona = Persona::create([
         'nombre' => $input['nombre'],
         'cedula' => $input['cedula'],
-       /*  'rol' => $rolEstudiante->name, */
         'rol' => $input['rol'],
         'usuario_id' => $user->id,
     ]);
@@ -105,7 +105,6 @@ class EstudianteController extends Controller
     $user->assignRole($rol);
 
     $persona->save();
-
     return redirect()->route('estudiante.index');
 
 }
@@ -138,9 +137,14 @@ class EstudianteController extends Controller
             $cursos = Curso::pluck('name', 'name')->all();
             $periodos = Periodo::pluck('nombrePeriodo', 'nombrePeriodo')->all();
             $roles = Role::pluck('name', 'name')->all();
-            $personRole = $persona->roles->pluck('name', 'name')->all();
+            $personRole = [];
+        
 
-            return view('estudiante.editar', compact('estudiante', 'user', 'cursos', 'periodos', 'roles'));
+            if ($persona->roles) {
+                $personRole = $persona->roles->pluck('name', 'name')->all();
+            }
+
+            return view('estudiante.editar', compact('estudiante', 'user', 'cursos', 'periodos', 'roles', 'personRole'));
         }
 
         return redirect()->route('estudiante.index')->with('error', 'El estudiante no existe');
@@ -161,7 +165,7 @@ class EstudianteController extends Controller
             'persona.cedula' => 'required',
             'persona.nombre' => 'required',
             'email' => 'required|email',
-            'password' => 'nullable|same:confirm-password',
+            'password' => 'nullable|same:confirm_password',
             'confirm-password' => 'nullable',
             'estudiante.periodo' => 'required',
             'rol' => 'required',
@@ -209,9 +213,9 @@ class EstudianteController extends Controller
     $estudiante = Estudiante::find($id);
 
     if ($estudiante) {
-        $estudiante->persona->user->delete(); // Eliminar el usuario
-        $estudiante->persona->delete(); // Eliminar la persona
-        $estudiante->delete(); // Eliminar el estudiante
+        $estudiante->persona->user->delete();
+        $estudiante->persona->delete();
+        $estudiante->delete();
 
         return redirect()->route('estudiante.index');
     }

@@ -38,8 +38,8 @@
                                     <div class="form-group">
                                         <label for="Tipocuenta">Tipo de cuenta</label>
                                         <select class="form-control" name="Tipocuenta">
-                                            <option value="Ahorros">Ahorros</option>
-                                            <option value="Corriente">Corriente</option>
+                                            <option value="Ahorros">AHORROS</option>
+                                            <option value="Corriente">CORRIENTE</option>
                                         </select>
                                     </div>
                                     <br>
@@ -69,10 +69,13 @@
                                         </div>
 
 
-
-
-
-                            </div>
+                                        <div class="col-xs-12 col-sm-12 col-md-12">
+                                            <div class="form-group">
+                                                <label for="Telefono">Teléfono/Celular</label>
+                                                <input class="form-control" type="text" name="Telefono" maxlength="10" oninput="this.value = this.value.replace(/[^0-9]/g, '');">
+                                            </div>
+                                        </div>
+                                </div>
                             <center>
                                 <button type="submit" class="btn btn-primary">Guardar</button>
                             </center>

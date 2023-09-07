@@ -18,6 +18,12 @@
 
                            {{--  Tabla  --}}
                            <div class="table-responsive">
+                            @if ($reunions->isEmpty())
+                            <div class="text-center">
+                              <i class="fas fa-exclamation-triangle fa-2x mb-3 text-muted"></i>
+                              <p class="text-muted">No existen registros de reuniones en este momento.</p>
+                          </div>
+                              @else
 
                            <table class="table table-striped mt-2">
                             <thead style="background-color: #6777ef">
@@ -69,9 +75,8 @@
 
                            <div class="pagination justify-content-end">
                             {!! $reunions->links() !!}
-
-
                             </div>
+                            @endif
                         </div>
 
                     </div>

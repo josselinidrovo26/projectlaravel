@@ -200,7 +200,7 @@
                                                 <div class="panel-body">
 
                                                     <?php
-                                                        $images = explode('|', $biografia->image); // Obtener las URLs de las imágenes
+                                                        $images = explode('|', $biografia->image); 
                                                         foreach ($images as $url) {
                                                             if (!empty($url)) {
                                                         ?>
@@ -217,13 +217,11 @@
                                             </p>
                                          </div>
 
-                                       <!-- Add this within the <div class="card-footer text-left"> block -->
                                         <div class="card-footer text-left">
                                             <a href="#" class="card-link like-button" data-biografia-id="{{ $biografia->id }}"><i class="fa fa-heart"></i> Me gusta</a>
                                             <span class="likes-count">{{ $biografia->likes }}</span>
                                         </div>
-                                            <!-- Place this at the end of your blade template, before the closing </body> tag -->
-                                                       <!-- Place this at the end of your blade template, before the closing </body> tag -->
+
                                                        <script>
                                                         $(document).ready(function() {
                                                             $('.like-button').on('click', function(event) {
@@ -251,8 +249,6 @@
                                                             });
                                                         });
                                                     </script>
-
-
 
                                      </div>
                                  @endforeach

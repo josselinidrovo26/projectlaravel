@@ -16,8 +16,13 @@
                                 <a class="btn btn-warning" href="{{ route('bancos.create') }}">Nuevo</a>
                             @endcan
 
-                           {{--  Tabla  --}}
                            <div class="table-responsive">
+                            @if ($bancos->isEmpty())
+                            <div class="text-center">
+                              <i class="fas fa-exclamation-triangle fa-2x mb-3 text-muted"></i>
+                              <p class="text-muted">No existen registros de cuentas bancarias en este momento.</p>
+                          </div>
+                              @else
 
                            <table class="table table-striped mt-2">
                             <thead style="background-color: #6777ef">
@@ -27,6 +32,7 @@
                                 <th style="color: #fff">Número cuenta</th>
                                 <th style="color: #fff">Nombre Beneficiario</th>
                                 <th style="color: #fff">Cédula</th>
+                                <th style="color: #fff">Teléfono</th>
                                 <th style="color: #fff">Acciones</th>
                             </thead>
                             <tbody>
@@ -38,7 +44,7 @@
                                     <td>{{ $banco->numcuenta }}</td>
                                     <td>{{ $banco->nameUser }}</td>
                                     <td>{{ $banco->cedula }}</td>
-
+                                    <td>{{ $banco->Telefono }}</td>
                                     <td>
                                         <form action="{{ route('bancos.destroy', $banco->id) }}" method="POST">
                                         @can('editar-bancos')
@@ -62,27 +68,9 @@
                            <div class="pagination justify-content-end">
                             {!! $bancos->links() !!}
 
-
-                             {{-- PAGINACION --}}
-
-
-                            {{--  <ul class="pagination">
-                                <li class="page-item">
-                                    <a class="page-link" href="#" aria-label="Previous">
-                                    <span aria-hidden="true">&laquo;</span>
-                                    </a>
-                                </li>
-                                <li class="page-item"><a class="page-link" href="#">1</a></li>
-                                <li class="page-item"><a class="page-link" href="#">2</a></li>
-                                <li class="page-item"><a class="page-link" href="#">3</a></li>
-                                <li class="page-item">
-                                    <a class="page-link" href="#" aria-label="Next">
-                                    <span aria-hidden="true">&raquo;</span>
-                                    </a>
-                                </li>
-                                </ul> --}}
-
                             </div>
+
+                            @endif
                         </div>
 
                     </div>

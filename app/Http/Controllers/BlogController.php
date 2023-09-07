@@ -69,25 +69,23 @@ class BlogController extends Controller
         $request->validate([
             'titulo' => 'required',
             'contenido' => 'required',
-            'cuota' => '',
+            'cuota' => 'nullable|numeric',
             'pago' => 'required|date|after_or_equal:today',
         ]);
 
         $blog = new Blog();
         $blog->titulo = $request->input('titulo');
         $blog->contenido = $request->input('contenido');
-        $blog->cuota = $request->input('cuota');
+        $blog->cuota = 0.00;
         $blog->pago = $request->input('pago');
         $blog->cursoblog = $user->persona->estudiante ? $user->persona->estudiante->curso : null;
         $blog->periodoblog = $user->persona->estudiante ? $user->persona->estudiante->periodo : null;
         $blog->save();
 
-        // Encontrar los estudiantes que pertenecen al mismo curso y periodo
         $estudiantes = Estudiante::where('curso', $blog->cursoblog)
             ->where('periodo', $blog->periodoblog)
             ->get();
 
-        // Crear registros de pago para cada estudiante relacionado con el nuevo blog
         foreach ($estudiantes as $estudiante) {
             $cuotaBlog = $blog->cuota;
             $abono = $blog->cuota;
@@ -97,8 +95,9 @@ class BlogController extends Controller
                 'estudiante_id' => $estudiante->id,
                 'eventoPago' => $blog->id,
                 'abono' => 0,
+                'suma' => 0,
                 'diferencia' => $diferenciaPago,
-                'estado' => 'No pagado',
+                'estado' => 'NO PAGADO',
                 'usuarioid'=> $user->id
             ]);
         }
@@ -159,7 +158,6 @@ class BlogController extends Controller
      */
     public function destroy(Blog $blog)
     {
-        // Verificar si existen detalles relacionados con el blog
         $detalles = Detalles::where('blog_id', $blog->id)->exists();
 
         if ($detalles) {

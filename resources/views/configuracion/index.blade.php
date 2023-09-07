@@ -28,7 +28,8 @@
                                     </div>
                                     <div class="form-group">
                                         <label for="fecha">Fecha de nacimiento:</label>
-                                        <input type="date" id="fecha" name="fecha" value="{{ $user->persona->fecha }}" class="form-control" max="{{ date('Y-m-d') }}">
+                                     <input type="date" id="fecha" name="fecha" value="{{ $user->persona->fecha }}" class="form-control" max="{{ date('Y-m-d') }}"> 
+                                      {{--   <input type="date" id="fecha" name="fecha" value="{{ $user->persona->fecha ? $user->persona->fecha->format('Y-m-d') : '' }}" class="form-control" max="{{ date('Y-m-d') }}" --}}
                                     </div>
                                     <div class="form-group">
                                         <label for="edad">Edad:</label>
@@ -40,7 +41,8 @@
                                         @csrf
                                         <input type="hidden" name="usuario_id" value="{{ $user->id }}">
                                         <input type="hidden" name="fecha" id="fechaHidden">
-                                        <input type="hidden" name="edad" id="edadHidden"> <!-- Nuevo campo de edad oculto -->
+                                        <input type="hidden" name="edad" id="edadHidden">
+
                                         <button type="submit" class="btn btn-primary">Guardar cambios</button>
                                     </form>
                                     @endif
@@ -57,7 +59,6 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
 <script>
     $(document).ready(function () {
-        // Función para calcular la edad a partir de la fecha de nacimiento
         function calcularEdad() {
             const fechaNacimiento = new Date($('#fecha').val());
             const hoy = new Date();
@@ -73,37 +74,27 @@
 
             $('#edad').val(edad);
         }
-
-        // Calcular edad al cargar la página
         calcularEdad();
-
-        // Calcular edad cada vez que se cambie la fecha
         $('#fecha').on('change', function () {
             calcularEdad();
         });
-
-        // Habilitar edición de la edad si se hace clic en el botón "Editar"
         $('#editarEdad').on('click', function () {
             $('#edad').prop('readonly', false);
         });
-
-          // Habilitar edición de la fecha y ocultar el botón "Editar"
         $('#editarFecha').on('click', function () {
             $('#fecha').prop('readonly', false);
             $('#editarFecha').hide();
             $('#formGuardarFecha').show();
         });
-
-         // Al enviar el formulario para guardar los cambios, ocultar el formulario y mostrar el botón "Editar"
          $('#formGuardarFecha').on('submit', function (event) {
             event.preventDefault();
             const nuevaFecha = $('#fecha').val();
-            const nuevaEdad = $('#edad').val(); // Obtener la edad actualizada
+            const nuevaEdad = $('#edad').val();
             $('#fechaHidden').val(nuevaFecha);
-            $('#edadHidden').val(nuevaEdad); // Establecer el valor de la edad oculta
+            $('#edadHidden').val(nuevaEdad);
             $(this).hide();
             $('#editarFecha').show();
-            this.submit(); // Envía el formulario al controlador
+            this.submit();
         });
     });
 </script>
@@ -111,5 +102,4 @@
 
 @endsection
 
-<!-- Estilos CSS (Bootstrap) -->
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.6.0/css/bootstrap.min.css">

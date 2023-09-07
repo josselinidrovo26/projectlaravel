@@ -1,7 +1,7 @@
 <?php
 
 namespace App\Http\Controllers;
-
+use App\Models\Persona;
 use App\Models\User;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Http\Request;
@@ -15,11 +15,10 @@ class ConfiguracionController extends Controller
      */
     public function index()
     {
-        $user = User::find(Auth::id()); // Obtener el usuario actualmente autenticado
+        $user = User::find(Auth::id());
 
         return view('configuracion.index', compact('user'));
     }
-    // Middleware en el constructor del controlador
         public function __construct()
         {
             $this->middleware('auth');
@@ -75,10 +74,25 @@ class ConfiguracionController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, $id)
+
+    public function update(Request $request)
     {
-        //
+      $user = User::find(Auth::id());
+
+        $request->validate([
+            'fecha' => 'nullable|date',
+            'edad' => 'nullable|integer|min:0',
+        ]);
+
+        $fecha = $request->input('fecha');
+        $edad = $request->input('edad');
+        $user->persona->fecha = $fecha;
+        $user->persona->edad = $edad;
+        $user->persona->save();
+
+        return redirect()->route('configuracion.index')->with('success', 'Perfil actualizado correctamente.');
     }
+
 
     /**
      * Remove the specified resource from storage.
@@ -90,4 +104,26 @@ class ConfiguracionController extends Controller
     {
         //
     }
+
+    public function guardarFecha(Request $request)
+    {
+        $this->validate($request, [
+            'usuario_id' => 'required|integer',
+            'fecha' => 'required|date',
+            'edad' => 'required|integer',
+        ]);
+
+        $usuario_id = $request->input('usuario_id');
+        $fecha = $request->input('fecha');
+        $edad = $request->input('edad');
+
+        $persona = Persona::where('usuario_id', $usuario_id)->first();
+        $persona->fecha = $fecha;
+        $persona->save();
+        $persona->edad = $edad;
+        $persona->save();
+
+        return redirect()->back()->with('success', 'Fecha y edad actualizadas exitosamente.');
+    }
+
 }

@@ -33,22 +33,12 @@ class PagoController extends Controller
 
         if ($request->has('search')) {
             $search = $request->input('search');
-
-            // Buscar registros con cédula que comiencen con la búsqueda
             $query->whereHas('estudiante.persona', function ($subquery) use ($search) {
                 $subquery->where('cedula', 'LIKE', $search . '%');
             });
         }
 
         $pagos = $query->paginate(10);
-
-        // Calcular la diferencia y actualizarla en la base de datos
-        // foreach ($pagos as $pago) {
-        //     $diferencia = $pago->blog->cuota - $pago->abono;
-        //     $pago->diferencia = $diferencia;
-        //     $pago->save();
-        // }
-
         $cedulaNoEncontrada = null;
 
         if ($request->has('search') && $pagos->isEmpty()) {
@@ -132,6 +122,7 @@ class PagoController extends Controller
             'titulo' => 'required',
             'estudiante_id' => '',
             'nombre' => 'required',
+            'suma' => '',
             'titulo' => 'required',
         ]);
 
@@ -143,9 +134,8 @@ class PagoController extends Controller
             return back()->withErrors(['mensaje' => 'El evento seleccionado no existe']);
         }
 
-
-        $abono = $request->input('abono');
-        $diferencia = $cuotaEvento - $abono;
+        $suma = $request->input('suma');
+     /*    $pagoHistorico = $request->input('pagoHistorico'); */
         $cedulaEstudiante = $request->input('cedula');
         $curso = $request->input('curso');
         $periodo = $request->input('periodo');
@@ -155,32 +145,38 @@ class PagoController extends Controller
         })
         ->where('cedula', $cedulaEstudiante)
         ->first();
-
-        // Verifica si el evento es null antes de acceder a sus propiedades
         if (!$evento) {
             return back()->withErrors(['mensaje' => 'El evento seleccionado no existe']);
         }
+            $ultimoPago = Pago::where('estudiante_id', $estudiante->estudiante->id)
+            ->where('eventoPago', $eventoId)
+            ->orderBy('created_at', 'desc')
+            ->first();
 
-        // Obtener el último pago del estudiante en el mismo evento
-        $ultimoPago = Pago::where('estudiante_id', $estudiante->estudiante->id)
-        ->where('eventoPago', $eventoId)
-        ->orderBy('created_at', 'desc') // Ordenar por fecha de creación descendente
-        ->first();
+            $ultimoValorSuma = $ultimoPago ? $ultimoPago->suma : 0;
+            $abono = $request->input('abono');
+            $suma = $ultimoValorSuma + $abono;
+            $diferencia = $cuotaEvento - $suma;
+            if ($suma == $cuotaEvento) {
+                $estado = 'PAGADO';
+            } elseif ($suma < $cuotaEvento && $suma > 0) {
+                $estado = 'PENDIENTE';
+            } else {
+                $estado = 'OTRO';
+            }
 
-    $ultimoValorDiferencia = $ultimoPago ? $ultimoPago->diferencia : 0;
+            $pago = new Pago();
+            $pago->abono = $abono;
+            $pago->diferencia = $diferencia;
+            $pago->suma = $suma;
+         /*    $pago->pagoHistorico = $pagoHistorico; */
+            $pago->estado = $estado;
+            $pago->estudiante_id = $estudiante->estudiante->id;
+            $pago->eventoPago = $request->input('titulo');
+            $pago->usuarioid = auth()->user()->id;
+            $pago->save();
 
-
-
-        $pago = new Pago();
-        $pago->abono = $abono;
-        $pago->diferencia = $diferencia;
-        $pago->estado = $request->input('estado');
-        $pago->estudiante_id = $estudiante->estudiante->id; // Asegúrate de que la relación estudiante en Persona sea correcta
-        $pago->eventoPago = $request->input('titulo');
-        $pago->usuarioid = auth()->user()->id;
-        $pago->save();
-
-        return redirect()->route('pagos.index')->with('success', 'Pago registrado con éxito.');
+            return redirect()->route('pagos.index')->with('success', 'Pago registrado con éxito.');
     }
 
 
@@ -250,14 +246,9 @@ class PagoController extends Controller
 public function generarRecibo(Pago $pago)
 {
     $logoImagePath = public_path('img/logo.png');
-
-    // Renderizar la vista del recibo en una variable
     $reciboHTML = view('pagos.recibo', compact('pago', 'logoImagePath'))->render();
-
-    // Crear el PDF utilizando la biblioteca Dompdf
     $pdf = PDF::loadHTML($reciboHTML);
 
-    // Devolver el PDF al navegador
     return $pdf->stream('Unidad educativa Blanca García-recibo.pdf');
 }
 
@@ -290,8 +281,6 @@ public function verificarEstado(Request $request)
 {
     $cedula = $request->input('cedula');
     $eventoId = $request->input('evento');
-
-    // Buscar el estudiante correspondiente a la cédula ingresada
     $estudiante = Estudiante::whereHas('persona', function ($query) use ($cedula) {
         $query->where('cedula', $cedula);
     })->first();
@@ -302,8 +291,6 @@ public function verificarEstado(Request $request)
             'message' => 'No se encontró un estudiante con la cédula ingresada.'
         ]);
     }
-
-    // Buscar el evento correspondiente
     $evento = Blog::find($eventoId);
 
     if (!$evento) {
@@ -313,7 +300,6 @@ public function verificarEstado(Request $request)
         ]);
     }
 
-    // Buscar el pago correspondiente a través de la relación con estudiante
     $pago = $estudiante->pagos()
         ->where('eventoPago', $eventoId)
         ->orderBy('created_at', 'desc')
@@ -323,7 +309,7 @@ public function verificarEstado(Request $request)
         return response()->json([
             'success' => true,
             'diferencia' => $pago->diferencia,
-            'estado' => $pago->estado // Agregar el estado al JSON de respuesta
+            'estado' => $pago->estado
         ]);
     } else {
         return response()->json([
@@ -332,11 +318,6 @@ public function verificarEstado(Request $request)
         ]);
     }
 }
-
-
-
-
-
 
 
 }

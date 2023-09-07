@@ -63,15 +63,14 @@
                                     </h3> </div>
 
                                 <p><b>Título del blog: </b>{{ $blog->titulo }}</p>
-                                <p><b>Fecha: </b><?php echo date('Y-m-d'); ?></p> <!-- Imprime la fecha actual -->
-                                <p><b>Factura N°:</b>&nbsp;00001</p>
+                                <p><b>Fecha: </b><?php echo date('Y-m-d'); ?></p>
+                                <p><b>Recibo N°:</b>&nbsp;00001</p>
 
                 </div>
             </div>
         </div>
-        
+
         @if ($canpay)
-        <!-- Segunda columna con el segundo card -->
         <div class="col-lg-6" >
             <div class="card">
                 <div class="card-body">
@@ -79,9 +78,8 @@
                         {{--  BOTON PAGOS --}}
                         <div id="paypal-button-container"></div>
                       <script>
-                          
+
                              var cuotaInput = document.getElementById('cuotaInput');
-                            // Convertir el valor del input a un número flotante (si es necesario)
                             var cuota = parseFloat(cuotaInput.value);
                             console.log(cuota);
                             paypal.Buttons({
@@ -99,7 +97,7 @@
                                         }]
                                     });
                                 },
-                                
+
                                 onApprove: function(data, actions) {
                                     actions.order.capture().then(function(detalles) {
 
@@ -107,7 +105,7 @@
                                         // Mostrar el div del paso 2
                                         document.getElementById('paso2').style.display = 'block';
                                         //window.location.href = "completado.php"
-                                        
+
                                         axios.post('/pasarelas/getDataStudent', {
                                             status: 'Pagado',
                                             monto: parseFloat(document.getElementById('cuotaInput').value),
@@ -154,7 +152,7 @@
             </div>
         </div>
 
-        @endif                                             
+        @endif
     </div>
         </div>
     </div>
@@ -163,8 +161,8 @@
     <div class="row mt-4 step-content" data-step="2" style="display: none;"  id="paso2">
         <div class="col-lg-12">
             <h5>Paso 2: Resumen de pago</h5>
-            
-            
+
+
             <div class="card" style="background-color: #cce5ff;">
                 <div class="card-body">
                     <h5 class="card-title">Detalles del Pago</h5>
@@ -184,7 +182,7 @@
                 btnSiguiente.addEventListener('click', function() {
                   setInvoiceData();
                 });
-              
+
                 // Definir la función que se ejecutará al hacer clic en el botón "Siguiente"
                 function setInvoiceData() {
                     axios.post('/pasarelas/getInvoice', {
@@ -216,10 +214,10 @@
                     });
 
                 }
-              
-               
+
+
               </script>
-                              
+
         </div>
     </div>
 
@@ -227,7 +225,7 @@
     <div class="row mt-4 step-content" data-step="3" style="display: none;">
         <div class="col-lg-12">
           <h5>Paso 3: Resultado</h5>
-      
+
           <!-- Cabecera -->
           <div class="row mb-2">
             <div class="col-md-2"><strong>Nombre:</strong> <span id="nombrePersona"></span></div>
@@ -248,7 +246,7 @@
             </div>
 
            </div>
-      
+
           <!-- Detalle -->
           <table class="table table-bordered">
             <thead>
@@ -258,14 +256,14 @@
               </tr>
             </thead>
             <tbody id="tablaDetalle">
-             
+
               <!-- Puedes agregar más filas según sea necesario -->
             </tbody>
           </table>
-      
+
         </div>
       </div>
-      
+
   {{--  Descargar reportes --}}
   <script>
         document.getElementById('descargarPDFButton').addEventListener('click', function() {
@@ -278,7 +276,7 @@
         filename: 'reporte_Factura.pdf',
         win.document.write('<html><head><title>Factura</title></head><body>');
         win.document.write('<div style="max-width: 800px; margin: 0 auto; padding: 20px; border: 1px solid #ccc; box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);"><div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 20px;"><div style="max-width: 150px;"><img src="{{ asset('img/logo.png') }}" alt="Logo de la empresa" style="max-width: 100%; height: auto;"></div><div style="text-align: right;">');
-        win.document.write(' <h2 style="margin: 0; font-size: 24px; color: #333;">Factura N° 12345</h2>');
+        win.document.write(' <h2 style="margin: 0; font-size: 24px; color: #333;">Recibo N° 12345</h2>');
         win.document.write(' <p style="margin: 5px 0; color: #555;">Fecha: ' + document.getElementById('datePago').innerText + '</p>');
         win.document.write(' <p style="margin: 5px 0; color: #555;">Cliente: ' + document.getElementById('nombrePersona').innerText + '</p>');
         win.document.write(' <p style="margin: 5px 0; color: #555;">Actividad a pagar: ' + document.getElementById('tituloEvento').innerText + '</p>');
@@ -336,7 +334,7 @@
         win.document.close();
         win.print();
         win.close();
-        
+
         // Crea el PDF con el contenido de la tabla
         html2pdf().from(tablaContenido).set(options).save();
     }
@@ -452,10 +450,10 @@
     function validateCuota(input) {
         // Obtener el valor ingresado por el usuario
         var cuota = parseFloat(input.value);
-    
+
         // Obtener el valor máximo permitido (valor de cuota)
         var maxCuota = parseFloat(input.getAttribute('max'));
-    
+
         // Verificar si el valor ingresado es numérico y no es mayor que el valor de cuota
         if (isNaN(cuota) || cuota > maxCuota) {
             // Si el valor no es válido, establecer el valor del input en el valor de cuota

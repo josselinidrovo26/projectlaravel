@@ -60,7 +60,8 @@ class CursoController extends Controller
             'name' => 'required',
         ]);
         Curso::create($request->all());
-        return redirect()->route('curso.index');
+        return redirect()->route('cursos.index');
+
 
     }
 
@@ -114,6 +115,6 @@ class CursoController extends Controller
     public function destroy(Curso $curso)
     {
         $curso->delete();
-        return redirect()->route('curso.index');
+        return redirect()->route('cursos.index');
     }
 }
