@@ -99,7 +99,4 @@
             });
         });
     </script>
-
-
-
 @endsection
