@@ -68,11 +68,14 @@ class ReportesController extends Controller
 
     public function filtrarPagos(Request $request)
     {
-        $eventoId = $request->input('evento');+
+        $eventoId = $request->input('evento');
+
+        // Filtrar los pagos según el evento seleccionado
         $pagos = Pago::with('blog', 'estudiante.persona')
             ->where('eventoPago', $eventoId)
             ->get();
 
+        // Retornar los datos en formato JSON
         return response()->json($pagos);
     }
 
@@ -87,6 +90,8 @@ class ReportesController extends Controller
         if (!$periodo || !$curso) {
             return response()->json([]);
         }
+
+        // Obtener los eventos correspondientes al curso y periodo seleccionados
         $eventos = Blog::where('cursoblog', $curso)
             ->where('periodoblog', $periodo)
             ->pluck('titulo', 'eventoPago');
@@ -97,12 +102,19 @@ class ReportesController extends Controller
 
     public function obtenerCuotaEvento(Request $request)
     {
+        // Validar que el título del evento fue enviado en la solicitud
         $request->validate([
             'titulo' => 'required|string',
         ]);
+
+        // Obtener el título del evento desde la solicitud
         $tituloEvento = $request->input('titulo');
+
+        // Realizar la lógica para obtener la cuota del evento según el título
+        // Supongamos que la cuota se encuentra en la tabla "blogs" y se busca por el campo "titulo"
         $cuotaEvento = Blog::where('titulo', $tituloEvento)->value('cuota');
 
+        // Retornar la cuota como respuesta en formato JSON
         return response()->json(['cuota' => $cuotaEvento]);
     }
     /**
@@ -176,6 +188,8 @@ class ReportesController extends Controller
     public function buscar(Request $request)
 {
     $query = $request->input('query');
+
+    // Realiza la consulta para buscar los registros que coincidan con el query
     $registrosEncontrados = Pago::where('nombre', 'like', '%' . $query . '%')
         ->orWhere('otro_campo', 'like', '%' . $query . '%')
         ->get();
