@@ -9,10 +9,10 @@
     </div>
 
     <div class="section-body">
-        <div class="row">
+        <div class="row d-flex align-items-center">
             <div class="container">
                 <div class="row">
-                    <div class="col-md-6">
+                    <div class="col-md-6 mx-auto">
                         <div class="card mb-4">
                             <div class="card-body">
                                 <h5 class="card-title">Información de perfil</h5>
@@ -28,7 +28,7 @@
                                     </div>
                                     <div class="form-group">
                                         <label for="fecha">Fecha de nacimiento:</label>
-                                     <input type="date" id="fecha" name="fecha" value="{{ $user->persona->fecha }}" class="form-control" max="{{ date('Y-m-d') }}"> 
+                                     <input type="date" id="fecha" name="fecha" value="{{ $user->persona->fecha }}" class="form-control" max="{{ date('Y-m-d') }}">
                                       {{--   <input type="date" id="fecha" name="fecha" value="{{ $user->persona->fecha ? $user->persona->fecha->format('Y-m-d') : '' }}" class="form-control" max="{{ date('Y-m-d') }}" --}}
                                     </div>
                                     <div class="form-group">
