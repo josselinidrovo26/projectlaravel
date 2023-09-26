@@ -15,8 +15,8 @@ use App\Http\Controllers\ReportesController;
 use App\Http\Controllers\ConfiguracionController;
 use App\Http\Controllers\ChatController;
 use App\Http\Controllers\ContactoController;
-use App\Http\Controllers\CalendarioController;
-use App\Http\Controllers\CalendaryController;
+/* use App\Http\Controllers\CalendarioController; */
+use App\Http\Controllers\EventoController;
 use App\Http\Controllers\AuditoriaController;
 use App\Http\Controllers\DetallesController;
 use App\Http\Controllers\PersonaController;
@@ -68,7 +68,7 @@ Route::group(['middleware' => ['auth']], function(){
     Route::resource('estudiante', EstudianteController::class);
     Route::resource('pagos', PagoController::class);
     Route::resource('pasarelas', PasarelaController::class);
-    Route::resource('calendario', CalendarioController::class);
+    Route::resource('evento', EventoController::class);
     Route::get('/payment', [PaymentController::class, 'showPaymentPage']);
 
     Route::post('/pasarelas/getDataStudent', [PasarelaController::class, 'getDataStudent'])->name('pasarelas.getDataStudent');
@@ -80,6 +80,8 @@ Route::group(['middleware' => ['auth']], function(){
 Route::patch('/usuarios/{id}', 'UsuarioController@update')->name('usuarios.update');
 
 Route::get('/api/latest-blog', [BlogController::class, 'getLatestBlog']);
+
+Route::get('/evento', [App\Http\Controllers\EventoController::class, 'index']);
 
 
 // routes/web.php

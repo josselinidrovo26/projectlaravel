@@ -52,7 +52,7 @@
     </a>
 @endif
 
-    <a class="nav-link" href="/calendario">
+    <a class="nav-link" href="/evento">
         <i class="fas fa-calendar"></i><span>Calendario</span>
 
     </a>

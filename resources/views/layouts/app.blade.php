@@ -16,6 +16,10 @@
 
 {{-- <script src="{{ asset('node_modules/bootstrap/dist/js/bootstrap.min.js') }}"></script> --}}
 
+{{-- <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/fullcalendar@5.6.0/main.css">
+<script src="https://cdn.jsdelivr.net/npm/fullcalendar@5.6.0/main.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/fullcalendar@5.6.0/locales-all.js"></script> --}}
+
 
 @yield('page_css')
     <link rel="stylesheet" href="{{ asset('web/css/style.css') }}">
@@ -27,6 +31,7 @@
     @yield('css')
 </head>
 <body>
+
 
 <div id="app">
     <div class="main-wrapper main-wrapper-1">
@@ -82,4 +87,7 @@
         };
     }(jQuery));
 </script>
+
+{{-- <script src="{{ asset('js./calendario.js') }}" defer></script> --}}
+
 </html>
